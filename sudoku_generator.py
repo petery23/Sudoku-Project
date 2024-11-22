@@ -1,10 +1,28 @@
 import math,random
+import pygame
+from pygments.styles.dracula import background
 
 """
 This was adapted from a GeeksforGeeks article "Program for Sudoku Generator" by Aarti_Rathi and Ankur Trisal
 https://www.geeksforgeeks.org/program-sudoku-generator/
 
 """
+class Cell:
+    def __init__(self, value, row, col, screen):
+        self.value = value
+        self.row = row
+        self.col = col
+        self.screen = screen
+
+    def set_cell_value(self, value):
+        self.value = value
+    def set_sketched_value(self, value):
+        self.value = value
+    def draw(self):
+        if(self.value!=0):
+            pass
+
+
 
 class SudokuGenerator:
     '''
@@ -209,3 +227,53 @@ def generate_sudoku(size, removed):
     sudoku.remove_cells()
     board = sudoku.get_board()
     return board
+
+def main():
+    # Initialize screen
+    SCREEN_WIDTH = 1280
+    SCREEN_HEIGHT = 720
+    pygame.init()
+    screen = pygame.display.set_mode((SCREEN_WIDTH,SCREEN_HEIGHT))
+    pygame.display.set_caption("Sudoku")
+
+
+    # Fill background
+    background_image = pygame.image.load('Sudoku_BG.jpg')
+    background_image = pygame.transform.scale(background_image,(1280,720))
+
+
+
+    # Welcome text
+    welcome_font = pygame.font.Font(None, 80)
+    welcome_text = welcome_font.render("Welcome to Sudoku!",1,(160,50,50))
+    welcome_textpos = welcome_text.get_rect()
+    welcome_textpos.centerx = screen.get_rect().centerx
+    welcome_textpos.centery = 100
+
+
+    # Select game mode text gm_text == gamemodetext
+    gm_font = pygame.font.Font(None, 50)
+    gm_text = gm_font.render("Select Game Mode:",1,(160,50,50))
+    gm_textpos = gm_text.get_rect()
+    gm_textpos.centerx = screen.get_rect().centerx
+    gm_textpos.centery = 400
+
+    button_font = pygame.font.Font(None, 40)
+    easy = button_font.render("Easy",1,)
+
+
+
+
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                return
+        screen.blit(background_image,(0,0))
+        screen.blit(welcome_text, welcome_textpos)
+        screen.blit(gm_text,gm_textpos)
+        pygame.display.flip()
+
+
+if __name__ == "__main__":
+    main()
+

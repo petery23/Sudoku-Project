@@ -237,41 +237,77 @@ def main():
     pygame.display.set_caption("Sudoku")
 
 
-    # Fill background
+    # Fill background option 1
     background_image = pygame.image.load('Sudoku_BG.jpg')
     background_image = pygame.transform.scale(background_image,(1280,720))
 
+    # Fill background option 2
+    lines = [[random.randint(0,SCREEN_WIDTH), random.randint(-SCREEN_HEIGHT,SCREEN_HEIGHT)] for i in range(50)]
+
+    BLACK = (0,0,0)
+    WHITE = (255,255,255)
+    RED = (255,0,0)
+    PURPLE = (128,0,128)
 
 
     # Welcome text
     welcome_font = pygame.font.Font(None, 80)
-    welcome_text = welcome_font.render("Welcome to Sudoku!",1,(160,50,50))
+    welcome_text = welcome_font.render("Welcome to Sudoku!",1,WHITE)
     welcome_textpos = welcome_text.get_rect()
     welcome_textpos.centerx = screen.get_rect().centerx
-    welcome_textpos.centery = 100
+    welcome_textpos.centery = 200
 
 
     # Select game mode text gm_text == gamemodetext
     gm_font = pygame.font.Font(None, 50)
-    gm_text = gm_font.render("Select Game Mode:",1,(160,50,50))
+    gm_text = gm_font.render("Select Game Mode:",1,WHITE)
     gm_textpos = gm_text.get_rect()
     gm_textpos.centerx = screen.get_rect().centerx
-    gm_textpos.centery = 400
+    gm_textpos.centery = 350
 
-    button_font = pygame.font.Font(None, 40)
-    easy = button_font.render("Easy",1,)
+    # default font for button text
+    button_font = pygame.font.Font(None, 48)
 
+    # easy
+    easy_rect = pygame.Rect(300,250,320,500)
+    easy_text = button_font.render("Easy",1,BLACK)
+    easy_button = easy_text.get_rect(center=easy_rect.center)
 
+    # medium
+    medium_rect = pygame.Rect(300, 250, 640, 500)
+    medium_text = button_font.render("Medium", 1, BLACK)
+    medium_button = medium_text.get_rect(center=medium_rect.center)
 
+    # hard
+    hard_rect = pygame.Rect(300, 250, 960, 500)
+    hard_text = button_font.render("Hard", 1, BLACK)
+    hard_button = hard_text.get_rect(center=hard_rect.center)
 
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 return
-        screen.blit(background_image,(0,0))
+
+        # cool purple animated background
+        screen.fill(BLACK)
+        for line in lines:
+            pygame.draw.line(screen, PURPLE, (line[0], line[1]), (line[0], line[1] + 50), 2)
+            line[1] += .5
+            if line[1] > SCREEN_HEIGHT:
+                line[1] = random.randint(-100, 0)
+
+        # placing everything on the screen
         screen.blit(welcome_text, welcome_textpos)
         screen.blit(gm_text,gm_textpos)
+        pygame.draw.rect(screen,WHITE,easy_button)
+        screen.blit(easy_text,easy_button)
+        pygame.draw.rect(screen, WHITE, medium_button)
+        screen.blit(medium_text,medium_button)
+        pygame.draw.rect(screen, WHITE, hard_button)
+        screen.blit(hard_text,hard_button)
         pygame.display.flip()
+
+
 
 
 if __name__ == "__main__":

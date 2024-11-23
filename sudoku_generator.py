@@ -287,6 +287,14 @@ def main():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 return
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                mouse_x, mouse_y = event.pos
+                if easy_button.collidepoint(mouse_x,mouse_y):
+                    print("Easy button pressed!")
+                if medium_button.collidepoint(mouse_x,mouse_y):
+                    print("Medium button pressed!")
+                if hard_button.collidepoint(mouse_x,mouse_y):
+                    print("Hard button pressed!")
 
         # cool purple animated background
         screen.fill(BLACK)

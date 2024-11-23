@@ -270,17 +270,17 @@ def main():
 
     # easy
     easy_rect = pygame.Rect(300,250,320,500)
-    easy_text = button_font.render("Easy",1,BLACK)
+    easy_text = button_font.render("Easy",1,WHITE)
     easy_button = easy_text.get_rect(center=easy_rect.center)
 
     # medium
     medium_rect = pygame.Rect(300, 250, 640, 500)
-    medium_text = button_font.render("Medium", 1, BLACK)
+    medium_text = button_font.render("Medium", 1, WHITE)
     medium_button = medium_text.get_rect(center=medium_rect.center)
 
     # hard
     hard_rect = pygame.Rect(300, 250, 960, 500)
-    hard_text = button_font.render("Hard", 1, BLACK)
+    hard_text = button_font.render("Hard", 1, WHITE)
     hard_button = hard_text.get_rect(center=hard_rect.center)
 
     while True:
@@ -299,16 +299,13 @@ def main():
         # placing everything on the screen
         screen.blit(welcome_text, welcome_textpos)
         screen.blit(gm_text,gm_textpos)
-        pygame.draw.rect(screen,WHITE,easy_button)
+        pygame.draw.rect(screen,PURPLE,easy_button)
         screen.blit(easy_text,easy_button)
-        pygame.draw.rect(screen, WHITE, medium_button)
+        pygame.draw.rect(screen, PURPLE, medium_button)
         screen.blit(medium_text,medium_button)
-        pygame.draw.rect(screen, WHITE, hard_button)
+        pygame.draw.rect(screen, PURPLE, hard_button)
         screen.blit(hard_text,hard_button)
         pygame.display.flip()
-
-
-
 
 if __name__ == "__main__":
     main()

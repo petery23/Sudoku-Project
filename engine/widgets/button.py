@@ -7,25 +7,25 @@ from engine.widget import Widget, PositionedWidget
 
 
 class Button(PositionedWidget):
-    on_click: Callable[[], None]
+    on_interact: Callable[[], None]
     surface: Surface
     rect: pygame.Rect
     interactable: bool
 
     def __init__(self,
                  position: tuple[int, int],
-                 on_click: Callable[[], None],
+                 on_interact: Callable[[], None],
                  foreground: Widget,
                  background: Widget,
                  size: tuple[float, float]):
         super().__init__(position)
 
-        self.on_click = on_click
+        self.on_interact = on_interact
         self.surface = Surface(size)
-        self.surface.fill("RED")
         self.rect = self.surface.get_rect(center=self.position)
-        background.draw_onto(self.surface, center=self.rect.center)
-        foreground.draw_onto(self.surface, center=self.rect.center)
+        background.draw_onto(self.surface, center=self.surface.get_rect().center)
+        foreground.draw_onto(self.surface, center=self.surface.get_rect().center)
+        self.interactable = True
 
     def get_size(self) -> tuple[int, int]:
         return self.surface.get_size()

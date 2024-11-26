@@ -1,8 +1,56 @@
 import pygame, random
-import sudoku_generator
 from pygments.styles.dracula import background
 
+from engine.engine import Engine
+from engine.systems.button_system import ButtonSystem
+from engine.systems.draw_system import DrawSystem
+from engine.widgets.box import Box
+from engine.widgets.button import Button
+from engine.widgets.positioned import Positioned
+from engine.widgets.text import Text
+from game.scenes.main_menu import MainMenuScene
+
+
+WINDOW_WIDTH = 1280
+WINDOW_HEIGHT = 720
+
+
 def main():
+    engine = Engine("Sudoku", (WINDOW_WIDTH, WINDOW_HEIGHT))
+
+    WHITE = pygame.Color(255, 255, 255)
+    welcome_font = pygame.font.Font(None, 80)
+    gm_font = pygame.font.Font(None, 50)
+    button_font = pygame.font.Font(None, 48)
+
+    scene = MainMenuScene([
+        DrawSystem([
+            Positioned(
+                position=(WINDOW_WIDTH // 2, WINDOW_HEIGHT // 4),
+                child=Text("Welcome to Sudoku!", WHITE, welcome_font)
+            ),
+            Positioned(
+                position=(WINDOW_WIDTH // 2, WINDOW_HEIGHT // 3),
+                child=Text("Select Game Mode:", WHITE, gm_font)
+            ),
+        ]),
+        ButtonSystem([
+           Button(
+               position=(WINDOW_WIDTH // 2, WINDOW_HEIGHT // 2),
+               on_click=lambda: None,
+               foreground=Text("Easy", WHITE, button_font),
+               background=Box((200, 250), color=WHITE),
+               size=(200, 250)
+           )
+        ]),
+    ])
+    engine.load_scene(scene)
+
+    engine.main_loop()
+    engine.dispose()
+
+    return
+
     # Initialize screen
     SCREEN_WIDTH = 1280
     SCREEN_HEIGHT = 720

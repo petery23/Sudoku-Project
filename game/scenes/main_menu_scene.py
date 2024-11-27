@@ -5,8 +5,8 @@ from engine.scene import Scene
 from engine.system import System
 
 
-BLACK = (0,0,0)
-PURPLE = (128,0,128)
+BLACK = (0, 0, 0)
+PURPLE = (128, 0, 128)
 
 
 class MainMenuScene(Scene):

@@ -1,3 +1,4 @@
+
 from typing import Callable
 
 from game.sudoku_difficulty import SudokuDifficulty
@@ -6,13 +7,29 @@ from sudoku_generator import SudokuGenerator
 
 class SudokuBoardCell:
     __value: int
+    __given: bool
 
-    def __init__(self, value: int = 0, is_sketch: bool = False):
+    def __init__(self, value: int = 0, is_sketch: bool = False, given: bool = False):
         # empty tiles are 0
         # sketch values are negative
+        if value < 0 or value > 9: raise ValueError("Number not in range")
+        self.__value = value * (-1 if is_sketch else 1)
+        self.__given = given
+
+    def is_given(self):
+        return self.__given
+
+    def set_value(self, value: int = 0, clear: bool = False, is_sketch: bool = False):
+        if self.__given: return
+        if clear or value == 0:
+            self.__value = 0
+            return
+        if value < 1 or value > 9: raise ValueError("Number not in range")
+
         self.__value = value * (-1 if is_sketch else 1)
 
     def get_value(self) -> tuple[int, bool, bool]:
+
         """
         Returns:
             - int The number to display
@@ -70,7 +87,7 @@ class SudokuBoard(SudokuBoardSubject):
         for x in range(len(state)):
             self.__state.append([])
             for y in range(len(state[x])):
-                self.__state[x].append(SudokuBoardCell(state[x][y]))
+                self.__state[x].append(SudokuBoardCell(state[x][y],given=True))
 
     def get_size(self) -> tuple[int, int]:
         return len(self.__state), len(self.__state[0])

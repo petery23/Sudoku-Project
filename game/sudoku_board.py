@@ -45,9 +45,11 @@ class SudokuBoardSubject:
 
 class SudokuBoard(SudokuBoardSubject):
     __state: list[list[SudokuBoardCell]]
+    __solution: list[list[int]]
 
-    def __init__(self, state: list[list[int]]):
+    def __init__(self, state: list[list[int]], solution: list[list[int]]):
         super().__init__()
+        self.__solution = solution
 
         assert(len(state) >= 3 and len(state) % 3 == 0
                and len(state[0]) >= 3 and len(state[0]) % 3 == 0), "Board size must be divisible by 3"
@@ -67,6 +69,9 @@ class SudokuBoard(SudokuBoardSubject):
     def set_cell(self, grid_pos: tuple[int, int], cell: SudokuBoardCell):
         self.__state[grid_pos[0]][grid_pos[1]] = cell
         self.force_notify_change()
+
+    def player_set_cell(self, grid_pos: tuple[int, int], cell):
+        pass
 
     def force_notify_change(self):
         self._notify_board_changed(self)

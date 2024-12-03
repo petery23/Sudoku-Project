@@ -15,8 +15,9 @@ def main():
     def on_difficulty_selected(difficulty: SudokuDifficulty):
         # Start game
 
-        board_state = generate_sudoku(9, difficulty.value)
-        board = SudokuBoard(board_state)
+        board_state, solution = generate_sudoku(9, difficulty.value)
+        board = SudokuBoard(board_state, solution)
+
 
         game_scene = get_game_scene(WINDOW_WIDTH, WINDOW_HEIGHT, board)
         engine.load_scene(game_scene)

@@ -9,11 +9,13 @@ class SudokuBoardCell:
         # sketch values are negative
         self.__value = value * (-1 if is_sketch else 1)
 
-    # Returns:
-    #   1: number to display
-    #   2: true if cell is not empty
-    #   3: true if cell contains a sketch
     def get_value(self) -> tuple[int, bool, bool]:
+        """
+        Returns:
+            1: number to display
+            2: true if cell is not empty
+            3: true if cell contains a sketch
+        """
         match self.__value:
             case 0:
                 return 0, False, False

@@ -12,9 +12,9 @@ class SudokuBoardCell:
     def get_value(self) -> tuple[int, bool, bool]:
         """
         Returns:
-            1: number to display
-            2: true if cell is not empty
-            3: true if cell contains a sketch
+            - int The number to display
+            - bool True if cell is not empty
+            - bool True if cell contains a sketch
         """
         match self.__value:
             case 0:
@@ -72,7 +72,7 @@ class SudokuBoard(SudokuBoardSubject):
         self.__state[grid_pos[0]][grid_pos[1]] = cell
         self.force_notify_change()
 
-    def player_set_cell(self, grid_pos: tuple[int, int], cell):
+    def player_set_cell(self, grid_pos: tuple[int, int], cell: SudokuBoardCell):
         pass
 
     def force_notify_change(self):

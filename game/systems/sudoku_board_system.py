@@ -1,5 +1,5 @@
+from engine.contexts import SceneChangeContext
 from engine.engine import UpdateContext, RenderContext
-from engine.input import MouseState
 from engine.system import System
 from game.sudoku_board import SudokuBoard
 from game.widgets.sudoku_board_widget import SudokuBoardWidget
@@ -15,7 +15,7 @@ class SudokuBoardSystem(System):
 
 
 
-    def enter_scope(self):
+    def enter_scope(self, context: SceneChangeContext):
         self.board.add_observer(self.__on_board_state_changed)
 
     def update(self, context: UpdateContext):
@@ -24,7 +24,7 @@ class SudokuBoardSystem(System):
     def render(self, context: RenderContext):
         self.board_widget.draw_onto(context.surface, center=context.surface.get_rect().center)
 
-    def exit_scope(self):
+    def exit_scope(self, context: SceneChangeContext):
         self.board.remove_observer(self.__on_board_state_changed)
 
     def dispose(self):

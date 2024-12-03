@@ -1,6 +1,6 @@
 import pygame, random
 
-from engine.contexts import UpdateContext, RenderContext
+from engine.contexts import UpdateContext, RenderContext, SceneChangeContext, SceneChangeContext
 from engine.scene import Scene
 from engine.system import System
 
@@ -16,10 +16,10 @@ class MainMenuScene(Scene):
         super().__init__(systems)
 
 
-    def enter_scope(self) -> None:
+    def enter_scope(self, context: SceneChangeContext) -> None:
         self.lines = [[random.uniform(0.0, 1.0), random.uniform(-1.0, 1.0)] for _ in range(50)]
 
-        super().enter_scope()
+        super().enter_scope(context)
 
 
     def update(self, context: UpdateContext) -> None:
@@ -45,8 +45,8 @@ class MainMenuScene(Scene):
         super().render(context)
 
 
-    def exit_scope(self) -> None:
-        super().exit_scope()
+    def exit_scope(self, context: SceneChangeContext) -> None:
+        super().exit_scope(context)
 
     def dispose(self) -> None:
         super().dispose()

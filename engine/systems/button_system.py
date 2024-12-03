@@ -1,3 +1,4 @@
+from engine.contexts import SceneChangeContext
 from engine.engine import UpdateContext, RenderContext
 from engine.input import MouseState
 from engine.system import System
@@ -12,7 +13,7 @@ class ButtonSystem(System):
         self.buttons = buttons
         self.buttons_pressed = []
 
-    def enter_scope(self):
+    def enter_scope(self, context: SceneChangeContext):
         pass
 
     def update(self, context: UpdateContext):
@@ -44,7 +45,7 @@ class ButtonSystem(System):
             button.draw_positioned(context.surface)
 
 
-    def exit_scope(self):
+    def exit_scope(self, context: SceneChangeContext):
         pass
 
     def dispose(self):

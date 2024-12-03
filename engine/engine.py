@@ -1,15 +1,15 @@
 import pygame
 
-from engine.contexts import UpdateContext, RenderContext
+from engine.contexts import UpdateContext, RenderContext, SceneChangeContext
 from engine.input import InputState
 from engine.scene import Scene
 
 
 class Engine:
     target_fps: float
+    surface: pygame.Surface
 
-    update_context: UpdateContext
-    render_context: RenderContext
+    input_state: InputState
 
     active_scene: Scene | None
 
@@ -18,35 +18,35 @@ class Engine:
 
         pygame.init()
         pygame.display.set_caption(window_name)
-        surface = pygame.display.set_mode(window_size)
+        self.surface = pygame.display.set_mode(window_size)
 
-        self.update_context = UpdateContext(0.0, surface.get_size())
-        self.render_context = RenderContext(surface)
+        self.input_state = InputState()
 
         self.active_scene = None
 
     def main_loop(self):
         clock = pygame.time.Clock()
-        input_state = InputState()
+
+        update_context = UpdateContext(0.0, self.surface.get_size(), self.input_state)
+        render_context = RenderContext(self.surface)
 
         while True:
             ### Process Events
-            input_state.start_frame()
+            self.input_state.start_frame()
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     return
 
-                input_state.process_event(event)
-            self.update_context.input = input_state
+                self.input_state.process_event(event)
             ###
 
             ### Update
-            self.update_context.dt = 1.0 / self.target_fps
-            self.active_scene.update(self.update_context)
+            update_context.dt = 1.0 / self.target_fps
+            self.active_scene.update(update_context)
             ###
 
             ### Render
-            self.active_scene.render(self.render_context)
+            self.active_scene.render(render_context)
             pygame.display.flip()
             ###
 
@@ -54,12 +54,15 @@ class Engine:
 
 
     def load_scene(self, scene: Scene | None):
+        self.input_state.clear()
+        context = SceneChangeContext(self.input_state)
+
         if self.active_scene is not None:
-            self.active_scene.exit_scope()
+            self.active_scene.exit_scope(context)
 
         self.active_scene = scene
         if self.active_scene is not None:
-            self.active_scene.enter_scope()
+            self.active_scene.enter_scope(context)
 
     def dispose(self):
         self.load_scene(None)

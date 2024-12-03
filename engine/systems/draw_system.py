@@ -1,4 +1,4 @@
-from engine.contexts import UpdateContext, RenderContext
+from engine.contexts import UpdateContext, RenderContext, SceneChangeContext
 from engine.system import System
 from engine.widget import PositionedWidget
 
@@ -9,7 +9,7 @@ class DrawSystem(System):
     def __init__(self, widgets: list[PositionedWidget]):
         self.widgets = widgets
 
-    def enter_scope(self):
+    def enter_scope(self, context: SceneChangeContext):
         pass
 
     def update(self, context: UpdateContext):
@@ -19,7 +19,7 @@ class DrawSystem(System):
         for widget in self.widgets:
             widget.draw_positioned(context.surface)
 
-    def exit_scope(self):
+    def exit_scope(self, context: SceneChangeContext):
         pass
 
     def dispose(self):

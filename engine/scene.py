@@ -1,4 +1,4 @@
-from engine.contexts import UpdateContext, RenderContext
+from engine.contexts import UpdateContext, RenderContext, SceneChangeContext
 from engine.system import System
 
 
@@ -8,9 +8,9 @@ class Scene:
     def __init__(self, systems: list[System]):
         self.systems = systems
 
-    def enter_scope(self) -> None:
+    def enter_scope(self, context: SceneChangeContext) -> None:
         for system in self.systems:
-            system.enter_scope()
+            system.enter_scope(context)
 
     def update(self, context: UpdateContext) -> None:
         for system in self.systems:
@@ -20,9 +20,9 @@ class Scene:
         for system in self.systems:
             system.render(context)
 
-    def exit_scope(self) -> None:
+    def exit_scope(self, context: SceneChangeContext) -> None:
         for system in self.systems:
-            system.exit_scope()
+            system.exit_scope(context)
 
     def dispose(self) -> None:
         for system in self.systems:

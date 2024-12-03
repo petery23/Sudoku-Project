@@ -62,7 +62,8 @@ def get_main_menu_scene(width: int, height: int, on_difficulty_selected: Callabl
     ])
 
 
-def get_game_scene(width: int, height: int, board: SudokuBoard) -> GameScene:
+def get_game_scene(width: int, height: int, board: SudokuBoard, on_exit_button_pushed: Callable) -> GameScene:
+    button_font = pygame.font.Font(None, 48)
     ui_size = min(width, height) - 45
 
     board_widget = SudokuBoardWidget(
@@ -76,6 +77,28 @@ def get_game_scene(width: int, height: int, board: SudokuBoard) -> GameScene:
         ),
         HighlightSystem(
             board_widget = board_widget
-
-        )
+        ),
+        ButtonSystem([
+            Button(
+                position = (width - 175, height - 220),
+                on_interact = lambda: on_exit_button_pushed(),
+                foreground = Text("Reset", WHITE, button_font),
+                background = Box((120, 50), color = PURPLE),
+                size = (120, 50)
+            ),
+            Button(
+                position = (width - 175, height - 160),
+                on_interact = lambda: on_exit_button_pushed(),
+                foreground = Text("Restart", WHITE, button_font),
+                background = Box((120, 50), color = PURPLE),
+                size = (120, 50)
+            ),
+            Button(
+                position = (width - 175, height - 100),
+                on_interact = lambda: on_exit_button_pushed(),
+                foreground = Text("Exit", WHITE, button_font),
+                background = Box((120, 50), color = PURPLE),
+                size = (120, 50)
+            ),
+        ]),
     ])

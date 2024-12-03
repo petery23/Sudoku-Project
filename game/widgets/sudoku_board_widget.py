@@ -17,6 +17,7 @@ class SudokuBoardWidget(Widget):
 
     cell_number_widgets: list[Text]
     cell_sketch_widgets: list[Text]
+    selected_cell: tuple[int,int]
 
     cell_size: tuple[int, int]
 
@@ -26,6 +27,7 @@ class SudokuBoardWidget(Widget):
 
         self.cell_number_widgets = []
         self.cell_sketch_widgets = []
+        self.selected_cell = (-1,-1)
         number_font = pygame.font.SysFont("nirmalauisemilight", 36,italic=True)
         sketch_font = pygame.font.SysFont("monospace", 14)
         for n in range(1, 10):
@@ -61,8 +63,8 @@ class SudokuBoardWidget(Widget):
 
     def __paint_cell(self, grid_pos: tuple[int, int]) -> None:
         cell = self.board.get_cell(grid_pos)
-        display_value, has_number, is_sketch = cell.get_value()
-        if not has_number: return
+        display_value, is_empty, is_sketch = cell.get_value()
+        if is_empty: return
 
         widget: Text
         if is_sketch: widget = self.cell_sketch_widgets[display_value - 1]

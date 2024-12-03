@@ -20,7 +20,7 @@ class Engine:
         pygame.display.set_caption(window_name)
         surface = pygame.display.set_mode(window_size)
 
-        self.update_context = UpdateContext(0.0)
+        self.update_context = UpdateContext(0.0, surface.get_size())
         self.render_context = RenderContext(surface)
 
         self.active_scene = None

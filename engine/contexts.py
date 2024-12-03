@@ -5,10 +5,13 @@ from engine.input import InputState
 
 class UpdateContext:
     dt: float
+    screenSize: tuple[int, int]
+
     input: InputState
 
-    def __init__(self, dt: float):
+    def __init__(self, dt: float, screenSize: tuple[int, int]):
         self.dt = dt
+        self.screenSize = screenSize
 
 
 class RenderContext:

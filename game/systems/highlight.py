@@ -16,13 +16,12 @@ class ArrowKeyDirection(Enum):
     RIGHT = 2
     LEFT = 3
 
-class HighlightSystem(System, ):
+class HighlightSystem(System):
     arrow_key_inputs: list[ArrowKeyDirection]
 
     def __init__(self, board_widget: SudokuBoardWidget):
         self.top_left_y = 0
         self.top_left_x = 0
-        self.selected_cell = (-1,-1)
         self.board_widget = board_widget
         self.cell_size = board_widget.get_size()[0]/(board_widget.board.get_size()[0])
         self.arrow_key_inputs = []
@@ -53,20 +52,20 @@ class HighlightSystem(System, ):
 
             mouse_x, mouse_y = context.input.mouse_pos
             if not(mouse_x < self.top_left_x) and not(mouse_x>self.top_left_x+self.board_widget.get_size()[0]) and not(mouse_y>self.top_left_y+self.board_widget.get_size()[1]):
-                self.selected_cell = (int((mouse_x - self.top_left_x) / self.cell_size), int((mouse_y - self.top_left_y) / self.cell_size))
+                self.board_widget.selected_cell = (int((mouse_x - self.top_left_x) / self.cell_size), int((mouse_y - self.top_left_y) / self.cell_size))
         else:
             # mouse hasn't moved, defer to arrow keys
             while len(self.arrow_key_inputs) > 0:
                 input_direction = self.arrow_key_inputs.pop(0)
                 match input_direction:
                     case ArrowKeyDirection.UP:
-                        self.selected_cell = (self.selected_cell[0], max(self.selected_cell[1] - 1, 0))
+                        self.board_widget.selected_cell = (self.board_widget.selected_cell[0], max(self.board_widget.selected_cell[1] - 1, 0))
                     case ArrowKeyDirection.DOWN:
-                        self.selected_cell = (self.selected_cell[0], min(self.selected_cell[1] + 1, self.board_widget.board.get_size()[1] - 1))
+                        self.board_widget.selected_cell = (self.board_widget.selected_cell[0], min(self.board_widget.selected_cell[1] + 1, self.board_widget.board.get_size()[1] - 1))
                     case ArrowKeyDirection.RIGHT:
-                        self.selected_cell = (min(self.selected_cell[0] + 1, self.board_widget.board.get_size()[0] - 1), self.selected_cell[1])
+                        self.board_widget.selected_cell = (min(self.board_widget.selected_cell[0] + 1, self.board_widget.board.get_size()[0] - 1), self.board_widget.selected_cell[1])
                     case ArrowKeyDirection.LEFT:
-                        self.selected_cell = (max(self.selected_cell[0] - 1, 0), self.selected_cell[1])
+                        self.board_widget.selected_cell = (max(self.board_widget.selected_cell[0] - 1, 0), self.board_widget.selected_cell[1])
 
         super().update(context)
 
@@ -76,8 +75,8 @@ class HighlightSystem(System, ):
         # context.surface.get_size()
         # draws outline around hovered cell
 
-        hovered_x = self.top_left_x + self.selected_cell[0]*self.cell_size
-        hovered_y = self.top_left_y + self.selected_cell[1]*self.cell_size
+        hovered_x = self.top_left_x + self.board_widget.selected_cell[0]*self.cell_size
+        hovered_y = self.top_left_y + self.board_widget.selected_cell[1]*self.cell_size
 
         pygame.draw.lines(context.surface,
                           HIGHLIGHT_PURPLE,

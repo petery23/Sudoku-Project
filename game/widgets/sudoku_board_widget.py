@@ -26,7 +26,7 @@ class SudokuBoardWidget(Widget):
 
         self.cell_number_widgets = []
         self.cell_sketch_widgets = []
-        number_font = pygame.font.SysFont("monospace", 16)
+        number_font = pygame.font.SysFont("nirmalauisemilight", 36,italic=True)
         sketch_font = pygame.font.SysFont("monospace", 14)
         for n in range(1, 10):
             self.cell_number_widgets.append(Text(str(n), NUMBER_COLOR, number_font))

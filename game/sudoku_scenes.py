@@ -63,7 +63,7 @@ def get_main_menu_scene(width: int, height: int, on_difficulty_selected: Callabl
 
 
 def get_game_scene(width: int, height: int, board: SudokuBoard) -> GameScene:
-    ui_size = min(width, height) - 50
+    ui_size = min(width, height) - 45
 
     board_widget = SudokuBoardWidget(
                 board=board,

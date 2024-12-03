@@ -40,5 +40,15 @@ class SudokuBoardWidget(Widget):
 
 
     def repaint_board(self) -> None:
-        self.surface.fill((100, 0, 0))
-        pygame.draw.circle(self.surface, (255, 255, 255), (100, 100), 50)
+        self.surface.fill((255, 255, 255))
+        width = self.surface.get_width()
+        length = self.surface.get_height()
+        for i in range(0, width, 75):
+            if (i % (75 * 3)) == 0:
+                pygame.draw.line(self.surface, "black", (0, i), (length, i), 3)
+            pygame.draw.line(self.surface, "black", (0, i), (length, i))
+        for i in range(0, length, 75):
+            if (i % (75 * 3) == 0):
+                pygame.draw.line(self.surface, "black", (i, 0), (i, width), 3)
+            pygame.draw.line(self.surface, "black", (i, 0), (i, width))
+

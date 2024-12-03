@@ -7,7 +7,7 @@ from engine.widgets.text import Text
 from game.sudoku_board import SudokuBoard, SudokuBoardCell
 
 
-NUMBER_COLOR = pygame.Color(255, 255, 255)
+NUMBER_COLOR = pygame.Color(0, 0, 0)
 SKETCH_COLOR = pygame.Color(200, 200, 200)
 
 

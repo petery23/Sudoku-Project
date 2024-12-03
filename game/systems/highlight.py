@@ -27,8 +27,8 @@ class HighlightSystem(System):
             self.top_left_y = (context.screenSize[1] - self.board_widget.get_size()[0]) / 2
 
             mouse_x, mouse_y = context.input.mouse_pos
-
-            self.selected_cell = (int((mouse_x - self.top_left_x) / self.cell_size), int((mouse_y - self.top_left_y) / self.cell_size))
+            if not(mouse_x < self.top_left_x) and not(mouse_x>self.top_left_x+self.board_widget.get_size()[0]) and not(mouse_y>self.top_left_y+self.board_widget.get_size()[1]):
+                self.selected_cell = (int((mouse_x - self.top_left_x) / self.cell_size), int((mouse_y - self.top_left_y) / self.cell_size))
         else:
             # mouse hasn't moved, defer to arrow keys
             pass
@@ -51,6 +51,8 @@ class HighlightSystem(System):
                           [(hovered_x,hovered_y), (hovered_x+self.cell_size,hovered_y),
                           (hovered_x+self.cell_size,hovered_y+self.cell_size), (hovered_x,hovered_y+self.cell_size)],
                           HIGHLIGHT_WIDTH)
+
+        print(self.selected_cell)
 
         pass
 

@@ -19,30 +19,48 @@ class SudokuBoardCell:
     def is_given(self):
         return self.__given
 
-    def set_value(self, value: int = 0, clear: bool = False, is_sketch: bool = False):
-        if self.__given: return
+    def set_value(self, value: int = 0, clear: bool = False, is_sketch: bool = False) -> bool:
+        """
+
+        Args:
+            value:
+            clear:
+            is_sketch:
+
+        Returns:
+            True if the cell was changed
+
+        """
+        if self.__given: return False
         if clear or value == 0:
-            self.__value = 0
-            return
+            if self.__value != 0:
+                self.__value = 0
+                return True
+            return False
         if value < 1 or value > 9: raise ValueError("Number not in range")
 
-        self.__value = value * (-1 if is_sketch else 1)
+        new_value = value * (-1 if is_sketch else 1)
+        if self.__value != new_value:
+            self.__value = new_value
+            return True
+
+        return False
+
 
     def get_value(self) -> tuple[int, bool, bool]:
-
         """
         Returns:
             - int The number to display
-            - bool True if cell is not empty
+            - bool True if cell is empty
             - bool True if cell contains a sketch
         """
         match self.__value:
             case 0:
-                return 0, False, False
+                return 0, True, False
             case x if x > 0:
-                return x, True, False
+                return x, False, False
             case x if x < 0:
-                return -x, True, True
+                return -x, False, True
 
     def __eq__(self, other):
         if isinstance(other, SudokuBoardCell):
@@ -87,7 +105,7 @@ class SudokuBoard(SudokuBoardSubject):
         for x in range(len(state)):
             self.__state.append([])
             for y in range(len(state[x])):
-                self.__state[x].append(SudokuBoardCell(state[x][y],given=True))
+                self.__state[x].append(SudokuBoardCell(state[x][y],given=state[x][y]!=0))
 
     def get_size(self) -> tuple[int, int]:
         return len(self.__state), len(self.__state[0])
@@ -95,11 +113,35 @@ class SudokuBoard(SudokuBoardSubject):
     def get_cell(self, grid_pos: tuple[int, int]) -> SudokuBoardCell:
         return self.__state[grid_pos[0]][grid_pos[1]]
 
-    def set_cell(self, grid_pos: tuple[int, int], cell: SudokuBoardCell):
-        self.__state[grid_pos[0]][grid_pos[1]] = cell
-        self.force_notify_change()
+    def set_cell(self, grid_pos: tuple[int, int], value: int = 0, clear: bool = False, is_sketch: bool = False) -> bool:
+        """
 
-    def __valid_cell(self, row: int, col: int, cell: SudokuBoardCell):
+        Args:
+            grid_pos:
+            value:
+            clear:
+            is_sketch:
+
+        Returns:
+            True if cell was changed
+
+        """
+
+        cell = self.__state[grid_pos[0]][grid_pos[1]]
+        previous = cell.get_value()
+
+        changed = cell.set_value(value, clear, is_sketch)
+        if not changed: return False
+
+        if self.validate_cell(grid_pos, cell):
+            # new cell state is valid
+            return True
+        else:
+            # new cell state is invalid, restore it to its previous state
+            if not cell.set_value(*previous): raise Exception("Cell had corrupted state when attempting to set its value.")
+            return False
+
+    def __valid_cell(self, grid_pos: tuple[int,int], cell: SudokuBoardCell):
         """
         Determines if num is contained in the specified row (horizontal) of the board
         If num is already in the specified row, return False. Otherwise, return True
@@ -114,35 +156,39 @@ class SudokuBoard(SudokuBoardSubject):
 
         # checks row
         for col in range(size):
-            if self.__state[row][col] == cell:
-                return False
+            if self.__state[grid_pos[0]][col] == cell:
+                if(col!=grid_pos[1]):
+                    return False
 
 
         # checks col
         for row in range(size):
-            if self.__state[row][col] == cell:
-                return False
+            if self.__state[row][grid_pos[1]] == cell:
+                if(row!=grid_pos[0]):
+                    return False
 
         # checks box
-        row_start = (row//3)*3
-        col_start = (col//3)*3
+        row_start = (grid_pos[0]//3)*3
+        col_start = (grid_pos[1]//3)*3
         for row in range(row_start, row_start + 3):
             for col in range(col_start, col_start + 3):
+                if row == grid_pos[0] and col == grid_pos[1]:
+                    continue
                 if self.__state[row][col] == cell:
                     return False
 
         # number is valid
         return True
 
-    def player_validate_set_cell(self, grid_pos: tuple[int, int], cell: SudokuBoardCell) -> bool:
+    def validate_cell(self, grid_pos: tuple[int, int], cell: SudokuBoardCell) -> bool:
         if self.__difficulty==SudokuDifficulty.EASY:
             if cell.get_value()[0] == self.__state[grid_pos[0]][grid_pos[1]]:
                 return True
             else:
                 return False
         if self.__difficulty==SudokuDifficulty.MEDIUM or self.__difficulty==SudokuDifficulty.HARD:
-            return self.__valid_cell(grid_pos[0], grid_pos[1], cell)
+            return self.__valid_cell(grid_pos, cell)
 
 
-    def force_notify_change(self):
+    def notify_change(self):
         self._notify_board_changed(self)

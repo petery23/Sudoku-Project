@@ -19,9 +19,12 @@ def main():
         board = SudokuBoard(board_state, solution, difficulty)
 
 
-        game_scene = get_game_scene(WINDOW_WIDTH, WINDOW_HEIGHT, board)
+        game_scene = get_game_scene(WINDOW_WIDTH, WINDOW_HEIGHT, board, on_exit_button_pushed)
         engine.load_scene(game_scene)
 
+    def on_exit_button_pushed():
+        main_menu_scene = get_main_menu_scene(WINDOW_WIDTH, WINDOW_HEIGHT, on_difficulty_selected)
+        engine.load_scene(main_menu_scene)
 
     main_menu_scene = get_main_menu_scene(WINDOW_WIDTH, WINDOW_HEIGHT, on_difficulty_selected)
     engine.load_scene(main_menu_scene)

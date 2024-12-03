@@ -13,6 +13,8 @@ class SudokuBoardSystem(System):
         self.board = board_widget.board
         self.board_widget = board_widget
 
+
+
     def enter_scope(self):
         self.board.add_observer(self.__on_board_state_changed)
 

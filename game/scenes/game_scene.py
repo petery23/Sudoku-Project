@@ -1,4 +1,4 @@
-import pygame
+import pygame, random
 
 from engine.contexts import UpdateContext, RenderContext
 from engine.scene import Scene
@@ -18,15 +18,29 @@ class GameScene(Scene):
 
 
     def enter_scope(self) -> None:
+        self.lines = [[random.uniform(0.0, 1.0), random.uniform(-1.0, 1.0)] for _ in range(50)]
         super().enter_scope()
 
 
     def update(self, context: UpdateContext) -> None:
+        for line in self.lines:
+            line[1] += 0.5 * context.dt
+            if line[1] > 1.0:
+                line[1] = random.uniform(-0.5, 0)
+
         super().update(context)
 
 
     def render(self, context: RenderContext) -> None:
-        context.surface.blit(self.background, (0, 0))
+        context.surface.fill(BLACK)
+
+        width = context.surface.get_width()
+        height = context.surface.get_height()
+
+        for line in self.lines:
+            start = (line[0] * width, line[1] * height)
+            end = (line[0] * width, line[1] * height + 50)
+            pygame.draw.line(context.surface, (128,0,128), start, end, 2)
 
         super().render(context)
 

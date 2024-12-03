@@ -1,4 +1,4 @@
-from engine.engine import UpdateContext, RenderContext
+from engine.contexts import UpdateContext, RenderContext
 
 class System:
     def enter_scope(self):

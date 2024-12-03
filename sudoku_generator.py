@@ -68,17 +68,19 @@ class SudokuGenerator:
                 print(self.board[row][col], end=" ")
             print()
 
-    '''
-	Determines if num is contained in the specified row (horizontal) of the board
-    If num is already in the specified row, return False. Otherwise, return True
 
-	Parameters:
-	row is the index of the row we are checking
-	num is the value we are looking for in the row
-	
-	Return: boolean
-    '''
-    def valid_in_row(self, row, num):
+    def valid_in_row(self, row: int, num: int):
+        """
+        Determines if num is contained in the specified row (horizontal) of the board
+        If num is already in the specified row, return False. Otherwise, return True
+
+        Parameters:
+        row is the index of the row we are checking
+        num is the value we are looking for in the row
+
+        Return: boolean
+        """
+
         for col in range(self.row_length):
             if self.board[row][col] == num:
                 return False

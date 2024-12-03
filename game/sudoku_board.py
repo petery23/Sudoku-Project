@@ -1,5 +1,8 @@
 from typing import Callable
 
+from game.sudoku_difficulty import SudokuDifficulty
+from sudoku_generator import SudokuGenerator
+
 
 class SudokuBoardCell:
     __value: int
@@ -23,6 +26,11 @@ class SudokuBoardCell:
                 return x, True, False
             case x if x < 0:
                 return -x, True, True
+
+    def __eq__(self, other):
+        if isinstance(other, SudokuBoardCell):
+            return other.__value == self.__value
+        return False
 
 
 class SudokuBoard: pass
@@ -48,10 +56,12 @@ class SudokuBoardSubject:
 class SudokuBoard(SudokuBoardSubject):
     __state: list[list[SudokuBoardCell]]
     __solution: list[list[int]]
+    __difficulty: SudokuDifficulty
 
-    def __init__(self, state: list[list[int]], solution: list[list[int]]):
+    def __init__(self, state: list[list[int]], solution: list[list[int]], difficulty: SudokuDifficulty):
         super().__init__()
         self.__solution = solution
+        self.__difficulty = difficulty
 
         assert(len(state) >= 3 and len(state) % 3 == 0
                and len(state[0]) >= 3 and len(state[0]) % 3 == 0), "Board size must be divisible by 3"
@@ -72,8 +82,50 @@ class SudokuBoard(SudokuBoardSubject):
         self.__state[grid_pos[0]][grid_pos[1]] = cell
         self.force_notify_change()
 
-    def player_set_cell(self, grid_pos: tuple[int, int], cell: SudokuBoardCell):
-        pass
+    def __valid_cell(self, row: int, col: int, cell: SudokuBoardCell):
+        """
+        Determines if num is contained in the specified row (horizontal) of the board
+        If num is already in the specified row, return False. Otherwise, return True
+
+        Parameters:
+        row is the index of the row we are checking
+        num is the value we are looking for in the row
+
+        Return: boolean
+        """
+        size = self.get_size()[0]
+
+        # checks row
+        for col in range(size):
+            if self.__state[row][col] == cell:
+                return False
+
+
+        # checks col
+        for row in range(size):
+            if self.__state[row][col] == cell:
+                return False
+
+        # checks box
+        row_start = (row//3)*3
+        col_start = (col//3)*3
+        for row in range(row_start, row_start + 3):
+            for col in range(col_start, col_start + 3):
+                if self.__state[row][col] == cell:
+                    return False
+
+        # number is valid
+        return True
+
+    def player_validate_set_cell(self, grid_pos: tuple[int, int], cell: SudokuBoardCell) -> bool:
+        if self.__difficulty==SudokuDifficulty.EASY:
+            if cell.get_value()[0] == self.__state[grid_pos[0]][grid_pos[1]]:
+                return True
+            else:
+                return False
+        if self.__difficulty==SudokuDifficulty.MEDIUM or self.__difficulty==SudokuDifficulty.HARD:
+            return self.__valid_cell(grid_pos[0], grid_pos[1], cell)
+
 
     def force_notify_change(self):
         self._notify_board_changed(self)

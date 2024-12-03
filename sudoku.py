@@ -16,7 +16,7 @@ def main():
         # Start game
 
         board_state, solution = generate_sudoku(9, difficulty.value)
-        board = SudokuBoard(board_state, solution)
+        board = SudokuBoard(board_state, solution, difficulty)
 
 
         game_scene = get_game_scene(WINDOW_WIDTH, WINDOW_HEIGHT, board)

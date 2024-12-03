@@ -6,6 +6,7 @@ from engine.systems.button_system import ButtonSystem
 from engine.systems.draw_system import DrawSystem
 from engine.widgets.box import Box
 from engine.widgets.button import Button
+from engine.widgets.perspective_widget import PerspectiveWidget
 from engine.widgets.positioned import Positioned
 from engine.widgets.text import Text
 from game.scenes.game_scene import GameScene
@@ -73,10 +74,16 @@ def get_game_scene(width: int, height: int, board: SudokuBoard, on_exit_button_p
 
     return GameScene((width, height), [
         SudokuBoardSystem(
-            board_widget=board_widget
+            board=board_widget.board,
+            board_widget=PerspectiveWidget(
+                child=board_widget,
+            )
         ),
         HighlightSystem(
-            board_widget = board_widget
+            board=board_widget.board,
+            board_widget = PerspectiveWidget(
+                child=board_widget,
+            )
         ),
         ButtonSystem([
             Button(

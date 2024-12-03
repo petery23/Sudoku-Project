@@ -1,4 +1,5 @@
 import pygame
+import pygame_shaders
 
 from engine.contexts import UpdateContext, RenderContext, SceneChangeContext
 from engine.input import InputState
@@ -7,7 +8,10 @@ from engine.scene import Scene
 
 class Engine:
     target_fps: float
+
+    display: pygame.Surface
     surface: pygame.Surface
+    screen_shader: pygame_shaders.Shader
 
     input_state: InputState
 
@@ -18,7 +22,11 @@ class Engine:
 
         pygame.init()
         pygame.display.set_caption(window_name)
-        self.surface = pygame.display.set_mode(window_size)
+
+        # pygame.OPENGL flag allows the use of custom shaders
+        self.display = pygame.display.set_mode(window_size, pygame.OPENGL | pygame.DOUBLEBUF)
+        self.surface = pygame.Surface(self.display.get_size())
+        self.screen_shader = pygame_shaders.DefaultScreenShader(self.surface)
 
         self.input_state = InputState()
 
@@ -26,11 +34,15 @@ class Engine:
 
     def main_loop(self):
         clock = pygame.time.Clock()
+        time = 0.0
 
-        update_context = UpdateContext(0.0, self.surface.get_size(), self.input_state)
-        render_context = RenderContext(self.surface)
+        update_context = UpdateContext(0.0,0.0, self.display.get_size(), self.input_state)
+        render_context = RenderContext(0.0, self.surface)
 
         while True:
+            time += clock.get_time() / 1000
+            dt = 1.0 / self.target_fps
+
             ### Process Events
             self.input_state.start_frame()
             for event in pygame.event.get():
@@ -41,12 +53,16 @@ class Engine:
             ###
 
             ### Update
-            update_context.dt = 1.0 / self.target_fps
+            update_context.time = time
+            update_context.dt = dt
             self.active_scene.update(update_context)
             ###
 
             ### Render
+            render_context.time = time
             self.active_scene.render(render_context)
+
+            self.screen_shader.render()
             pygame.display.flip()
             ###
 

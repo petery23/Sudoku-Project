@@ -1,6 +1,6 @@
-import pygame
-from scipy.constants import value
+import math
 
+import pygame
 from engine.contexts import SceneChangeContext
 from engine.engine import UpdateContext, RenderContext
 from engine.input import KeyboardEvent, KeyboardAction
@@ -8,15 +8,17 @@ from engine.system import System
 from game.sudoku_board import SudokuBoard, SudokuBoardCell
 from game.systems.highlight import ArrowKeyDirection
 from game.widgets.sudoku_board_widget import SudokuBoardWidget
+from engine.widgets.perspective_widget import PerspectiveWidget
+from game.sudoku_board import SudokuBoard
 
 
 class SudokuBoardSystem(System):
     board: SudokuBoard
-    board_widget: SudokuBoardWidget
+    board_widget: PerspectiveWidget
     keyboard_inputs: list[int]
 
-    def __init__(self, board_widget: SudokuBoardWidget):
-        self.board = board_widget.board
+    def __init__(self, board: SudokuBoard, board_widget: PerspectiveWidget):
+        self.board = board
         self.board_widget = board_widget
         self.keyboard_inputs = []
 
@@ -64,6 +66,8 @@ class SudokuBoardSystem(System):
             self.board.notify_change()
 
     def render(self, context: RenderContext):
+        self.board_widget.x_rot = math.cos(context.time) * 10.0
+        self.board_widget.y_rot = math.sin(context.time) * 10.0
         self.board_widget.draw_onto(context.surface, center=context.surface.get_rect().center)
 
     def exit_scope(self, context: SceneChangeContext):

@@ -12,6 +12,7 @@ from game.scenes.game_scene import GameScene
 from game.scenes.main_menu_scene import MainMenuScene
 from game.sudoku_board import SudokuBoard
 from game.sudoku_difficulty import SudokuDifficulty
+from game.systems.highlight import HighlightSystem
 from game.systems.sudoku_board_system import SudokuBoardSystem
 from game.widgets.sudoku_board_widget import SudokuBoardWidget
 
@@ -64,11 +65,17 @@ def get_main_menu_scene(width: int, height: int, on_difficulty_selected: Callabl
 def get_game_scene(width: int, height: int, board: SudokuBoard) -> GameScene:
     ui_size = min(width, height) - 50
 
-    return GameScene((width, height), [
-        SudokuBoardSystem(
-            board_widget=SudokuBoardWidget(
+    board_widget = SudokuBoardWidget(
                 board=board,
                 ui_size=(ui_size, ui_size),
-            ),
+            )
+
+    return GameScene((width, height), [
+        SudokuBoardSystem(
+            board_widget=board_widget
         ),
+        HighlightSystem(
+            board_widget = board_widget
+
+        )
     ])

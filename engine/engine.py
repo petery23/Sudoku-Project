@@ -27,10 +27,11 @@ class Engine:
 
     def main_loop(self):
         clock = pygame.time.Clock()
+        input_state = InputState()
 
         while True:
             ### Process Events
-            input_state = InputState()
+            input_state.start_frame()
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     return

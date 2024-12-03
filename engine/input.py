@@ -24,9 +24,10 @@ class InputState:
         self.mouse_down_pos = (0, 0)
         self.mouse_up_pos = (0, 0)
 
-    def process_event(self, event: pygame.event.Event):
+    def start_frame(self):
         self.mouse_pos = pygame.mouse.get_pos()
 
+    def process_event(self, event: pygame.event.Event):
         match self.mouse_state:
             case MouseState.DOWN:
                 self.mouse_state = MouseState.DRAGGING

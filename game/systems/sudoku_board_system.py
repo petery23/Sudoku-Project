@@ -5,21 +5,21 @@ from engine.contexts import SceneChangeContext
 from engine.engine import UpdateContext, RenderContext
 from engine.input import KeyboardEvent, KeyboardAction
 from engine.system import System
-from game.sudoku_board import SudokuBoard, SudokuBoardCell
-from game.systems.highlight import ArrowKeyDirection
-from game.widgets.sudoku_board_widget import SudokuBoardWidget
 from engine.widgets.perspective_widget import PerspectiveWidget
 from game.sudoku_board import SudokuBoard
+from game.widgets.sudoku_board_widget import SudokuBoardWidget
 
 
 class SudokuBoardSystem(System):
     board: SudokuBoard
-    board_widget: PerspectiveWidget
+    board_widget: SudokuBoardWidget
+    perspective_widget: PerspectiveWidget
     keyboard_inputs: list[int]
 
-    def __init__(self, board: SudokuBoard, board_widget: PerspectiveWidget):
+    def __init__(self, board: SudokuBoard, board_widget: SudokuBoardWidget, perspective_widget: PerspectiveWidget):
         self.board = board
         self.board_widget = board_widget
+        self.perspective_widget = perspective_widget
         self.keyboard_inputs = []
 
     def enter_scope(self, context: SceneChangeContext):
@@ -66,9 +66,9 @@ class SudokuBoardSystem(System):
             self.board.notify_change()
 
     def render(self, context: RenderContext):
-        self.board_widget.x_rot = math.cos(context.time) * 10.0
-        self.board_widget.y_rot = math.sin(context.time) * 10.0
-        self.board_widget.draw_onto(context.surface, center=context.surface.get_rect().center)
+        self.perspective_widget.x_rot = math.cos(context.time) * 10.0
+        self.perspective_widget.y_rot = math.sin(context.time) * 10.0
+        self.perspective_widget.draw_onto(context.surface, center=context.surface.get_rect().center)
 
     def exit_scope(self, context: SceneChangeContext):
         self.board.remove_observer(self.__on_board_state_changed)

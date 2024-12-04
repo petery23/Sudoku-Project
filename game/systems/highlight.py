@@ -7,6 +7,7 @@ from engine.input import KeyboardEvent, KeyboardAction
 from engine.system import System
 from engine.widgets.perspective_widget import PerspectiveWidget
 from game.sudoku_board import SudokuBoard
+from game.widgets.sudoku_board_widget import SudokuBoardWidget
 
 HIGHLIGHT_PURPLE = (128,0,128)
 HIGHLIGHT_WIDTH = 4
@@ -22,16 +23,16 @@ class HighlightSystem(System):
     board_pixel_size: tuple[int, int]
 
     perspective_widget: PerspectiveWidget
-    board_widget: BoardWidget
+    board_widget: SudokuBoardWidget
 
     arrow_key_inputs: list[ArrowKeyDirection]
 
-    def __init__(self, board: SudokuBoard, perspective_widget: PerspectiveWidget):
+    def __init__(self, board: SudokuBoard, board_widget: SudokuBoardWidget, perspective_widget: PerspectiveWidget):
         self.perspective_widget = perspective_widget
-        self.board_widget = perspective_widget.child
+        self.board_widget = board_widget
         
         self.board_pixel_size = self.board_widget.get_size()
-        self.board_cell_pixel_size = (self.board_cell_pixel_size[0] // board.get_size()[0], self.board_cell_pixel_size[1] // board.get_size()[1])
+        self.board_cell_pixel_size = (self.board_pixel_size[0] // board.get_size()[0], self.board_pixel_size[1] // board.get_size()[1])
 
         self.arrow_key_inputs = []
 
@@ -68,8 +69,8 @@ class HighlightSystem(System):
                 # mouse is outside board vertically
                 pass
             else:
-                self.board_widget.selected_cell = (mouse_x - top_left_x // self.board_cell_pixel_size[0],
-                                                   mouse_y - top_left_y // self.board_cell_pixel_size[1])
+                self.board_widget.selected_cell = ((mouse_x - top_left_x) // self.board_cell_pixel_size[0],
+                                                   (mouse_y - top_left_y) // self.board_cell_pixel_size[1])
 
         else:
             # mouse hasn't moved, defer to arrow keys
@@ -93,8 +94,8 @@ class HighlightSystem(System):
         # context.surface.get_size()
         # draws outline around hovered cell
 
-        top_left_x = (context.surface.getSize()[0] - self.board_pixel_size[0]) // 2
-        top_left_y = (context.surface.getSize()[1] - self.board_pixel_size[1]) // 2
+        top_left_x = (context.surface.get_size()[0] - self.board_pixel_size[0]) // 2
+        top_left_y = (context.surface.get_size()[1] - self.board_pixel_size[1]) // 2
 
         hovered_x = top_left_x + self.board_widget.selected_cell[0] * self.board_cell_pixel_size[0]
         hovered_y = top_left_y + self.board_widget.selected_cell[1] * self.board_cell_pixel_size[1]

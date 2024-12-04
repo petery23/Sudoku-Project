@@ -75,13 +75,15 @@ def get_game_scene(width: int, height: int, board: SudokuBoard, on_exit_button_p
     return GameScene((width, height), [
         SudokuBoardSystem(
             board=board_widget.board,
-            board_widget=PerspectiveWidget(
+            board_widget=board_widget,
+            perspective_widget=PerspectiveWidget(
                 child=board_widget,
             )
         ),
         HighlightSystem(
             board=board_widget.board,
-            board_widget = PerspectiveWidget(
+            board_widget=board_widget,
+            perspective_widget = PerspectiveWidget(
                 child=board_widget,
             )
         ),

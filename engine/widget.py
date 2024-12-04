@@ -13,6 +13,9 @@ class Widget:
                   ) -> None:
         pass
 
+    def parent_should_repaint(self) -> bool:
+        return False
+
 
 class PositionedWidget(Widget):
     position: tuple[int, int]

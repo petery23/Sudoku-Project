@@ -8,7 +8,7 @@ from game.sudoku_board import SudokuBoard, SudokuBoardCell
 
 
 NUMBER_COLOR = pygame.Color(0, 0, 0)
-SKETCH_COLOR = pygame.Color(200, 200, 200)
+SKETCH_COLOR = pygame.Color(50, 0, 50)
 
 
 class SudokuBoardWidget(Widget):
@@ -17,9 +17,12 @@ class SudokuBoardWidget(Widget):
 
     cell_number_widgets: list[Text]
     cell_sketch_widgets: list[Text]
-    selected_cell: tuple[int,int]
 
     cell_size: tuple[int, int]
+
+    selected_cell: tuple[int, int]
+
+    __is_dirty: bool
 
     def __init__(self, board: SudokuBoard, ui_size: tuple[int, int]):
         grid_size = board.get_size()
@@ -27,22 +30,26 @@ class SudokuBoardWidget(Widget):
 
         self.cell_number_widgets = []
         self.cell_sketch_widgets = []
-        self.selected_cell = (-1,-1)
-        number_font = pygame.font.SysFont("nirmalauisemilight", 36,italic=True)
-        sketch_font = pygame.font.SysFont("monospace", 14)
+
+        number_font = pygame.font.SysFont("nirmalauisemilight", 42)
+        sketch_font = pygame.font.SysFont("nirmalauisemilight", 28, italic=True)
         for n in range(1, 10):
             self.cell_number_widgets.append(Text(str(n), NUMBER_COLOR, number_font))
             self.cell_sketch_widgets.append(Text(str(n), SKETCH_COLOR, sketch_font))
 
         self.cell_size = (ui_size[0] // grid_size[0], ui_size[1] // grid_size[1])
 
+        self.selected_cell = (-1, -1)
+
         self.surface = pygame.Surface(ui_size)
         self.board = board
         self.repaint_board()
+        self.__is_dirty = True
 
 
     def get_size(self) -> tuple[int, int]:
         return self.surface.get_size()
+
 
     def draw_onto(self,
                   screen: pygame.Surface,
@@ -61,18 +68,31 @@ class SudokuBoardWidget(Widget):
         screen.blit(self.surface, target)
 
 
+    def parent_should_repaint(self) -> bool:
+        if self.__is_dirty:
+            self.__is_dirty = False
+            return True
+        return False
+
+
     def __paint_cell(self, grid_pos: tuple[int, int]) -> None:
         cell = self.board.get_cell(grid_pos)
         display_value, is_empty, is_sketch = cell.get_value()
         if is_empty: return
 
-        widget: Text
-        if is_sketch: widget = self.cell_sketch_widgets[display_value - 1]
-        else: widget = self.cell_number_widgets[display_value - 1]
+        screen_pos = (grid_pos[0] * self.cell_size[0] + (self.cell_size[0] // 2),
+                      grid_pos[1] * self.cell_size[1] + (self.cell_size[1] // 2))
 
-        screen_pos = (grid_pos[0] * self.cell_size[0] + (self.cell_size[0] // 2), grid_pos[1] * self.cell_size[1] + (self.cell_size[1] // 2))
+        widget: Widget
+        if is_sketch:
+            widget = self.cell_sketch_widgets[display_value - 1]
+            screen_pos = (screen_pos[0] - self.cell_size[0] / 4,
+                          screen_pos[1] - self.cell_size[1] / 4)
+        else:
+            widget = self.cell_number_widgets[display_value - 1]
 
         widget.draw_onto(self.surface, center=screen_pos)
+
 
     def repaint_board(self) -> None:
         self.surface.fill((255, 255, 255))
@@ -90,3 +110,5 @@ class SudokuBoardWidget(Widget):
         for x in range(self.board.get_size()[0]):
             for y in range(self.board.get_size()[1]):
                 self.__paint_cell((x, y))
+
+        self.__is_dirty = True

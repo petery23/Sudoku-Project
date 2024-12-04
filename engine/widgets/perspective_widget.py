@@ -26,8 +26,16 @@ class PerspectiveWidget(Widget):
             PERSPECTIVE_FRAGMENT_SHADER_PATH,
             target_surface=self.surface)
 
+
     def get_size(self) -> tuple[int, int]:
         return self.surface.get_size()
+
+
+    def __repaint_child(self) -> None:
+        self.surface.fill((0, 0, 0, 0))
+        self.child.draw_onto(self.surface, top_left=(0, 0))
+        print("Repainted")
+
 
     def draw_onto(self,
                   screen: pygame.Surface,
@@ -43,12 +51,13 @@ class PerspectiveWidget(Widget):
             assert top_left is not None or center is not None
             return
 
-        self.surface.fill((0, 0, 0, 0))
-        self.child.draw_onto(self.surface, top_left=(0, 0))
+        should_repaint_child = self.child.parent_should_repaint()
+        if should_repaint_child:
+            self.__repaint_child()
 
-        self.shader.send("texturePixelSize", self.surface.get_size()[0])
+        #self.shader.send("texturePixelSize", self.surface.get_size()[0])
         self.shader.send("x_rot", self.x_rot)
         self.shader.send("y_rot", self.y_rot)
-        render = self.shader.render()
+        render = self.shader.render(update_surface=should_repaint_child)
 
         screen.blit(render, target)

@@ -51,7 +51,6 @@ class HighlightSystem(System):
     def enter_scope(self, context: SceneChangeContext):
         context.input.add_observer(self.__on_keyboard_input)
 
-        super().enter_scope(context)
 
     def update(self, context: UpdateContext):
         if abs(context.input.mouse_delta[0]) + abs(context.input.mouse_delta[1]) >= 1:
@@ -86,13 +85,15 @@ class HighlightSystem(System):
                     case ArrowKeyDirection.LEFT:
                         self.board_widget.selected_cell = (max(self.board_widget.selected_cell[0] - 1, 0), self.board_widget.selected_cell[1])
 
-        super().update(context)
 
     def render(self, context: RenderContext):
         # board is centered
         # context.surface.get_size() gives pixel size of entire screen
         # context.surface.get_size()
         # draws outline around hovered cell
+
+        if self.board_widget.selected_cell[0] == -1 or self.board_widget.selected_cell[1] == -1:
+            return
 
         top_left_x = (context.surface.get_size()[0] - self.board_pixel_size[0]) // 2
         top_left_y = (context.surface.get_size()[1] - self.board_pixel_size[1]) // 2
@@ -110,12 +111,8 @@ class HighlightSystem(System):
                             (hovered_x,                                 hovered_y + self.board_cell_pixel_size[1])],
                           HIGHLIGHT_WIDTH)
 
-        super().render(context)
-
     def exit_scope(self, context: SceneChangeContext):
         context.input.remove_observer(self.__on_keyboard_input)
 
-        super().exit_scope(context)
-
     def dispose(self):
-        super().dispose()
+        pass

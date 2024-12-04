@@ -23,6 +23,9 @@ class Engine:
         pygame.init()
         pygame.display.set_caption(window_name)
 
+        #pygame.display.gl_set_attribute(pygame.GL_MULTISAMPLEBUFFERS, 1)
+        #pygame.display.gl_set_attribute(pygame.GL_MULTISAMPLESAMPLES, 4)
+
         # pygame.OPENGL flag allows the use of custom shaders
         self.display = pygame.display.set_mode(window_size, pygame.OPENGL | pygame.DOUBLEBUF)
         self.surface = pygame.Surface(self.display.get_size())

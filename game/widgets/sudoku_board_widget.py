@@ -29,6 +29,7 @@ class SudokuBoardWidget(PositionedWidget):
 
         grid_size = board.get_size()
         assert math.isclose(grid_size[0] / grid_size[1], ui_size[0] / ui_size[1]), "grid_size and ui_size must have same aspect ratio!"
+        assert ui_size[0] % grid_size[1] == 0 and ui_size[1] % grid_size[1] == 0, "ui_size must be divisible by grid_size!"
 
         self.cell_number_widgets = []
         self.cell_sketch_widgets = []
@@ -104,12 +105,12 @@ class SudokuBoardWidget(PositionedWidget):
         self.surface.fill((255, 255, 255))
         width = self.surface.get_width()
         length = self.surface.get_height()
-        for i in range(0, width, 75):
-            if (i % (75 * 3)) == 0:
+        for i in range(0, width, self.cell_size[0]):
+            if (i % (self.cell_size[0] * 3)) == 0:
                 pygame.draw.line(self.surface, "black", (0, i), (length, i), 3)
             pygame.draw.line(self.surface, "black", (0, i), (length, i))
-        for i in range(0, length, 75):
-            if i % (75 * 3) == 0:
+        for i in range(0, length, self.cell_size[1]):
+            if i % (self.cell_size[1] * 3) == 0:
                 pygame.draw.line(self.surface, "black", (i, 0), (i, width), 3)
             pygame.draw.line(self.surface, "black", (i, 0), (i, width))
 

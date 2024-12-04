@@ -8,13 +8,10 @@ flat out vec2 o;
 out vec3 p;
 
 // All in degrees
-uniform float fov = 4.0f;
+uniform float fov = 30.0f;
 uniform float y_rot = 0.0f;
 uniform float x_rot = 0.0f;
-// At 0, the image retains its size when unrotated.
-// At 1, the image is resized so that it can do a full
-// rotation without clipping inside its rect.
-const float inset = 1.0f;
+const float inset = -500.0f;
 // Consider changing this to a uniform and changing it from code
 
 uniform float texturePixelSize;

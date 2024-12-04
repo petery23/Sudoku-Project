@@ -54,7 +54,7 @@ class PerspectiveWidget(Widget):
         if should_repaint_child:
             self.__repaint_child()
 
-        #self.shader.send("texturePixelSize", self.surface.get_size()[0])
+        self.shader.send("texturePixelSize", self.surface.get_size()[0])
         self.shader.send("x_rot", self.x_rot)
         self.shader.send("y_rot", self.y_rot)
         render = self.shader.render(update_surface=should_repaint_child)

@@ -1,16 +1,14 @@
 import math
 from enum import Enum
-from typing import Any, Optional
 
-import numpy as np
 import pygame
-from numpy import ndarray, dtype
 
 from engine.contexts import UpdateContext, RenderContext, SceneChangeContext
 from engine.input import KeyboardEvent, KeyboardAction
 from engine.system import System
 from engine.widgets.perspective_widget import PerspectiveWidget
 from game.sudoku_board import SudokuBoard
+from game.systems.sudoku_board_system import PERSPECTIVE_ROT_ANGLE
 from game.widgets.sudoku_board_widget import SudokuBoardWidget
 
 class ArrowKeyDirection(Enum):
@@ -102,8 +100,8 @@ class HighlightSystem(System):
         if self.board_widget.selected_cell[0] == -1 or self.board_widget.selected_cell[1] == -1:
             return
 
-        self.perspective_widget.x_rot = math.cos(context.time) * 20.0
-        self.perspective_widget.y_rot = math.sin(context.time) * 20.0
+        self.perspective_widget.x_rot = math.cos(context.time) * PERSPECTIVE_ROT_ANGLE
+        self.perspective_widget.y_rot = math.sin(context.time) * PERSPECTIVE_ROT_ANGLE
         self.perspective_widget.draw_onto(context.surface, center=context.surface.get_rect().center)
 
 

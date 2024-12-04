@@ -66,7 +66,7 @@ def get_main_menu_scene(width: int, height: int, on_difficulty_selected: Callabl
 
 def get_game_scene(width: int, height: int, board: SudokuBoard, on_exit_button_pushed: Callable) -> GameScene:
     button_font = pygame.font.Font(None, 48)
-    ui_size = min(width, height) - 45
+    ui_size = min(width, height)
 
     board_widget = SudokuBoardWidget(
                 board=board,

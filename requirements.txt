@@ -1,0 +1,2 @@
+pygame~=2.6.1
+pygame_shaders @ git+https://github.com/willhuff0/pygame_shaders@main

@@ -4,10 +4,10 @@ precision highp float;
 layout (location = 0) in vec3 vertexPos;
 layout (location = 1) in vec2 vertexTexCoord;
 
-out vec2 uv;
 flat out vec2 o;
 out vec3 p;
 
+// All in degrees
 uniform float fov = 4.0f;
 uniform float y_rot = 0.0f;
 uniform float x_rot = 0.0f;
@@ -47,6 +47,5 @@ void main()
     p.xy *= v * inv_rot_mat[2].z;
     o = v * inv_rot_mat[2].xy;
 
-    uv = vertexTexCoord;
     gl_Position = vec4(vertexPos.xy + (vertexTexCoord - 0.5) / texturePixelSize * t * (1.0 - inset), vertexPos.z, 1.0);
 }

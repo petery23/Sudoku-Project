@@ -15,7 +15,7 @@ class Image(Widget):
         return self.surface.get_size()
 
     def draw_onto(self,
-                  screen: pygame.Surface,
+                  dest: pygame.Surface,
                   top_left: tuple[int, int] | None = None,
                   center: tuple[int, int] | None = None,
                   max_size: tuple[int, int] | None = None,
@@ -28,4 +28,4 @@ class Image(Widget):
             assert top_left is not None or center is not None
             return
 
-        screen.blit(self.surface, target)
+        dest.blit(self.surface, target)

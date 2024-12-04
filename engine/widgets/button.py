@@ -31,7 +31,7 @@ class Button(PositionedWidget):
         return self.surface.get_size()
 
     def draw_onto(self,
-                  screen: pygame.Surface,
+                  dest: pygame.Surface,
                   top_left: tuple[int, int] | None = None,
                   center: tuple[int, int] | None = None,
                   max_size: tuple[int, int] | None = None,
@@ -44,7 +44,7 @@ class Button(PositionedWidget):
             assert top_left is not None or center is not None
             return
 
-        screen.blit(self.surface, target)
+        dest.blit(self.surface, target)
 
     def draw_positioned(self, surface: pygame.Surface) -> None:
         surface.blit(self.surface, self.rect)

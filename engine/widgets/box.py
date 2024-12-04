@@ -15,7 +15,7 @@ class Box(Widget):
         return self.size
 
     def draw_onto(self,
-                  screen: pygame.Surface,
+                  dest: pygame.Surface,
                   top_left: tuple[int, int] | None = None,
                   center: tuple[int, int] | None = None,
                   max_size: tuple[int, int] | None = None,
@@ -31,4 +31,4 @@ class Box(Widget):
             assert top_left is not None or center is not None
             return
 
-        pygame.draw.rect(screen, self.color, rect)
+        pygame.draw.rect(dest, self.color, rect)

@@ -2,7 +2,7 @@ import math
 
 import pygame
 
-from engine.widget import Widget
+from engine.widget import Widget, PositionedWidget
 from engine.widgets.text import Text
 from game.sudoku_board import SudokuBoard, SudokuBoardCell
 
@@ -11,7 +11,7 @@ NUMBER_COLOR = pygame.Color(0, 0, 0)
 SKETCH_COLOR = pygame.Color(50, 0, 50)
 
 
-class SudokuBoardWidget(Widget):
+class SudokuBoardWidget(PositionedWidget):
     surface: pygame.Surface
     board: SudokuBoard
 
@@ -25,6 +25,8 @@ class SudokuBoardWidget(Widget):
     __is_dirty: bool
 
     def __init__(self, board: SudokuBoard, ui_size: tuple[int, int]):
+        super().__init__((0, 0))
+
         grid_size = board.get_size()
         assert math.isclose(grid_size[0] / grid_size[1], ui_size[0] / ui_size[1]), "grid_size and ui_size must have same aspect ratio!"
 
@@ -52,7 +54,7 @@ class SudokuBoardWidget(Widget):
 
 
     def draw_onto(self,
-                  screen: pygame.Surface,
+                  dest: pygame.Surface,
                   top_left: tuple[int, int] | None = None,
                   center: tuple[int, int] | None = None,
                   max_size: tuple[int, int] | None = None,
@@ -65,7 +67,11 @@ class SudokuBoardWidget(Widget):
             assert top_left is not None or center is not None
             return
 
-        screen.blit(self.surface, target)
+        dest.blit(self.surface, target)
+
+
+    def draw_positioned(self, surface: pygame.Surface) -> None:
+        self.draw_onto(surface, top_left=(0, 0))
 
 
     def parent_should_repaint(self) -> bool:

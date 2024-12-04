@@ -1,7 +1,7 @@
 import pygame
 import pygame_shaders
 
-from engine.widget import Widget
+from engine.widget import Widget, PositionedWidget
 
 PERSPECTIVE_VERTEX_SHADER_PATH = "shaders/perspective.vert"
 PERSPECTIVE_FRAGMENT_SHADER_PATH = "shaders/perspective.frag"
@@ -9,22 +9,21 @@ PERSPECTIVE_FRAGMENT_SHADER_PATH = "shaders/perspective.frag"
 
 class PerspectiveWidget(Widget):
     surface: pygame.Surface
-    child: Widget
+    child: PositionedWidget
     shader: pygame_shaders.Shader
 
     x_rot: float = 0.0
     y_rot: float = 0.0
 
-    def __init__(self, child: Widget):
+    def __init__(self, child: PositionedWidget, size: tuple[int, int], enable_mipmaps: bool = False):
         self.child = child
-
-        inner_size = child.get_size()
-        self.surface = pygame.Surface((inner_size[0], inner_size[1]), pygame.SRCALPHA)
+        self.surface = pygame.Surface(size, pygame.SRCALPHA)
 
         self.shader = pygame_shaders.Shader(
             PERSPECTIVE_VERTEX_SHADER_PATH,
             PERSPECTIVE_FRAGMENT_SHADER_PATH,
-            target_surface=self.surface)
+            target_surface=self.surface,
+            enable_mipmaps=enable_mipmaps)
 
 
     def get_size(self) -> tuple[int, int]:
@@ -33,12 +32,12 @@ class PerspectiveWidget(Widget):
 
     def __repaint_child(self) -> None:
         self.surface.fill((0, 0, 0, 0))
-        self.child.draw_onto(self.surface, top_left=(0, 0))
-        print("Repainted")
+        self.child.draw_positioned(self.surface)
+        print(f"Perspective ({self}): repainted")
 
 
     def draw_onto(self,
-                  screen: pygame.Surface,
+                  dest: pygame.Surface,
                   top_left: tuple[int, int] | None = None,
                   center: tuple[int, int] | None = None,
                   max_size: tuple[int, int] | None = None,
@@ -60,4 +59,4 @@ class PerspectiveWidget(Widget):
         self.shader.send("y_rot", self.y_rot)
         render = self.shader.render(update_surface=should_repaint_child)
 
-        screen.blit(render, target)
+        dest.blit(render, target)

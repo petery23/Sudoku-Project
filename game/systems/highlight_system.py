@@ -1,6 +1,10 @@
+import math
 from enum import Enum
+from typing import Any, Optional
 
+import numpy as np
 import pygame
+from numpy import ndarray, dtype
 
 from engine.contexts import UpdateContext, RenderContext, SceneChangeContext
 from engine.input import KeyboardEvent, KeyboardAction
@@ -8,9 +12,6 @@ from engine.system import System
 from engine.widgets.perspective_widget import PerspectiveWidget
 from game.sudoku_board import SudokuBoard
 from game.widgets.sudoku_board_widget import SudokuBoardWidget
-
-HIGHLIGHT_PURPLE = (128,0,128)
-HIGHLIGHT_WIDTH = 4
 
 class ArrowKeyDirection(Enum):
     UP = 0
@@ -22,8 +23,9 @@ class HighlightSystem(System):
     board_cell_pixel_size: tuple[int, int]
     board_pixel_size: tuple[int, int]
 
-    perspective_widget: PerspectiveWidget
     board_widget: SudokuBoardWidget
+
+    perspective_widget: PerspectiveWidget
 
     arrow_key_inputs: list[ArrowKeyDirection]
 
@@ -53,6 +55,8 @@ class HighlightSystem(System):
 
 
     def update(self, context: UpdateContext):
+        previous = self.board_widget.selected_cell
+
         if abs(context.input.mouse_delta[0]) + abs(context.input.mouse_delta[1]) >= 1:
             # mouse has moved
             # finds cell being hovered over
@@ -85,31 +89,23 @@ class HighlightSystem(System):
                     case ArrowKeyDirection.LEFT:
                         self.board_widget.selected_cell = (max(self.board_widget.selected_cell[0] - 1, 0), self.board_widget.selected_cell[1])
 
+        if previous != self.board_widget.selected_cell:
+            hovered_x = self.board_widget.selected_cell[0] * self.board_cell_pixel_size[0] + self.board_cell_pixel_size[0] // 2
+            hovered_y = self.board_widget.selected_cell[1] * self.board_cell_pixel_size[1] + self.board_cell_pixel_size[1] // 2
+
+            # selection has changed, repaint
+            self.perspective_widget.child.position = (hovered_x, hovered_y)
+            self.perspective_widget.child.make_dirty()
+
 
     def render(self, context: RenderContext):
-        # board is centered
-        # context.surface.get_size() gives pixel size of entire screen
-        # context.surface.get_size()
-        # draws outline around hovered cell
-
         if self.board_widget.selected_cell[0] == -1 or self.board_widget.selected_cell[1] == -1:
             return
 
-        top_left_x = (context.surface.get_size()[0] - self.board_pixel_size[0]) // 2
-        top_left_y = (context.surface.get_size()[1] - self.board_pixel_size[1]) // 2
+        self.perspective_widget.x_rot = math.cos(context.time) * 20.0
+        self.perspective_widget.y_rot = math.sin(context.time) * 20.0
+        self.perspective_widget.draw_onto(context.surface, center=context.surface.get_rect().center)
 
-        hovered_x = top_left_x + self.board_widget.selected_cell[0] * self.board_cell_pixel_size[0]
-        hovered_y = top_left_y + self.board_widget.selected_cell[1] * self.board_cell_pixel_size[1]
-
-        pygame.draw.lines(context.surface,
-                          HIGHLIGHT_PURPLE,
-                          True,
-                          [
-                            (hovered_x,                                 hovered_y), 
-                            (hovered_x + self.board_cell_pixel_size[0], hovered_y),
-                            (hovered_x + self.board_cell_pixel_size[0], hovered_y + self.board_cell_pixel_size[1]), 
-                            (hovered_x,                                 hovered_y + self.board_cell_pixel_size[1])],
-                          HIGHLIGHT_WIDTH)
 
     def exit_scope(self, context: SceneChangeContext):
         context.input.remove_observer(self.__on_keyboard_input)

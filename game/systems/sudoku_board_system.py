@@ -66,8 +66,8 @@ class SudokuBoardSystem(System):
             self.board.notify_change()
 
     def render(self, context: RenderContext):
-        self.perspective_widget.x_rot = math.cos(context.time) * 10.0
-        self.perspective_widget.y_rot = math.sin(context.time) * 10.0
+        self.perspective_widget.x_rot = math.cos(context.time) * 20.0
+        self.perspective_widget.y_rot = math.sin(context.time) * 20.0
         self.perspective_widget.draw_onto(context.surface, center=context.surface.get_rect().center)
 
     def exit_scope(self, context: SceneChangeContext):

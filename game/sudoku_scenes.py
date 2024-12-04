@@ -6,6 +6,7 @@ from engine.systems.button_system import ButtonSystem
 from engine.systems.draw_system import DrawSystem
 from engine.widgets.box import Box
 from engine.widgets.button import Button
+from engine.widgets.outlined_box import OutlinedBox
 from engine.widgets.perspective_widget import PerspectiveWidget
 from engine.widgets.positioned import Positioned
 from engine.widgets.text import Text
@@ -13,7 +14,7 @@ from game.scenes.game_scene import GameScene
 from game.scenes.main_menu_scene import MainMenuScene
 from game.sudoku_board import SudokuBoard
 from game.sudoku_difficulty import SudokuDifficulty
-from game.systems.highlight import HighlightSystem
+from game.systems.highlight_system import HighlightSystem
 from game.systems.sudoku_board_system import SudokuBoardSystem
 from game.widgets.sudoku_board_widget import SudokuBoardWidget
 
@@ -72,11 +73,16 @@ def get_game_scene(width: int, height: int, board: SudokuBoard, on_exit_button_p
                 ui_size=(ui_size, ui_size),
             )
 
+    board_pixel_size = board_widget.get_size()
+    board_cell_pixel_size = (board_pixel_size[0] // board.get_size()[0], board_pixel_size[1] // board.get_size()[1])
+
     return GameScene((width, height), [
         SudokuBoardSystem(
             board=board_widget.board,
             board_widget=board_widget,
             perspective_widget=PerspectiveWidget(
+                enable_mipmaps=True,
+                size=board_widget.get_size(),
                 child=board_widget,
             )
         ),
@@ -84,7 +90,16 @@ def get_game_scene(width: int, height: int, board: SudokuBoard, on_exit_button_p
             board=board_widget.board,
             board_widget=board_widget,
             perspective_widget = PerspectiveWidget(
-                child=board_widget,
+                enable_mipmaps=False,
+                size=board_widget.get_size(),
+                child=Positioned(
+                    position=(0, 0),
+                    child=OutlinedBox(
+                        size=board_cell_pixel_size,
+                        width=4,
+                        color=pygame.Color(128, 0, 128),
+                    ),
+                )
             )
         ),
         ButtonSystem([

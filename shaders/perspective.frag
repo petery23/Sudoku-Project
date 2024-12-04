@@ -19,7 +19,6 @@
 #version 330 core
 precision highp float;
 
-in vec2 uv;
 flat in vec2 o;
 in vec3 p;
 

@@ -6,14 +6,31 @@ class Widget:
         pass
 
     def draw_onto(self,
-                  screen: pygame.Surface,
+                  dest: pygame.Surface,
                   top_left: tuple[int, int] | None = None,
                   center: tuple[int, int] | None = None,
                   max_size: tuple[int, int] | None = None,
                   ) -> None:
         pass
 
+    def make_dirty(self):
+        """
+
+        Sets the widget's dirty flag to True.
+        Use parent_should_repaint to check and clear the flag.
+
+        """
+        pass
+
     def parent_should_repaint(self) -> bool:
+        """
+
+        Clears the widget's dirty flag.
+
+        Returns:
+            True if the widget is dirty
+
+        """
         return False
 
 

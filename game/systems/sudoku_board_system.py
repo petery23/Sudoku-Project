@@ -52,6 +52,8 @@ class SudokuBoardSystem(System):
                 self.keyboard_inputs.append(9)
             case pygame.K_RETURN:
                 self.keyboard_inputs.append(-1)
+            case pygame.K_BACKSPACE:
+                self.keyboard_inputs.append(-2)
 
     def update(self, context: UpdateContext):
         board_changed = False
@@ -63,6 +65,11 @@ class SudokuBoardSystem(System):
                 cell = self.board.get_cell(self.board_widget.selected_cell)
                 sketched_value = cell.get_value()[0] if cell.get_value()[2] else 0
                 if sketched_value != 0 and self.board.set_cell(self.board_widget.selected_cell, value=sketched_value, is_sketch=False):
+                    board_changed = True
+
+            elif new_value == -2:
+                # Backspace key was pressed, clear the cell
+                if self.board.set_cell(self.board_widget.selected_cell, value=0, clear = True):
                     board_changed = True
 
             else:

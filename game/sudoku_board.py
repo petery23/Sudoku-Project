@@ -144,7 +144,7 @@ class SudokuBoard(SudokuBoardSubject):
         #     if not cell.set_value(*previous): raise Exception("Cell had corrupted state when attempting to set its value.")
         #     return False
 
-    def __valid_cell(self, grid_pos: tuple[int,int], cell: SudokuBoardCell):
+    def validate_cell(self, grid_pos: tuple[int, int]):
         """
         Determines if num is contained in the specified row (horizontal) of the board
         If num is already in the specified row, return False. Otherwise, return True
@@ -155,19 +155,20 @@ class SudokuBoard(SudokuBoardSubject):
 
         Return: boolean
         """
+        cell = self.get_cell(grid_pos)
         size = self.get_size()[0]
 
         # checks row
         for col in range(size):
             if self.__state[grid_pos[0]][col] == cell:
-                if(col!=grid_pos[1]):
+                if col!=grid_pos[1]:
                     return False
 
 
         # checks col
         for row in range(size):
             if self.__state[row][grid_pos[1]] == cell:
-                if(row!=grid_pos[0]):
+                if row!=grid_pos[0]:
                     return False
 
         # checks box
@@ -183,15 +184,19 @@ class SudokuBoard(SudokuBoardSubject):
         # number is valid
         return True
 
-    def validate_cell(self, grid_pos: tuple[int, int], cell: SudokuBoardCell) -> bool:
-        if self.__difficulty==SudokuDifficulty.EASY:
-            if cell.get_value()[0] == self.__state[grid_pos[0]][grid_pos[1]]:
-                return True
-            else:
-                return False
-        if self.__difficulty==SudokuDifficulty.MEDIUM or self.__difficulty==SudokuDifficulty.HARD:
-            return self.__valid_cell(grid_pos, cell)
+    # def validate_cell(self, grid_pos: tuple[int, int], cell: SudokuBoardCell) -> bool:
+    #     if self.__difficulty==SudokuDifficulty.EASY:
+    #         if cell.get_value()[0] == self.__state[grid_pos[0]][grid_pos[1]]:
+    #             return True
+    #         else:
+    #             return False
+    #     if self.__difficulty==SudokuDifficulty.MEDIUM or self.__difficulty==SudokuDifficulty.HARD:
+    #         return self.__valid_cell(grid_pos, cell)
 
 
     def notify_change(self):
         self._notify_board_changed(self)
+
+
+    def get_difficulty(self):
+        return self.__difficulty

@@ -72,19 +72,18 @@ class SudokuBoardSystem(System):
             new_value = self.keyboard_inputs.pop(0)
             if new_value == -1:
                 # commiting the current sketched value
-                cell = self.board.get_cell(self.board_widget.selected_cell)
-                sketched_value = cell.get_value()[0] if cell.get_value()[2] else 0
-                if sketched_value != 0 and self.board.set_cell(self.board_widget.selected_cell, value=sketched_value, is_sketch=False):
+                display_value, is_empty, is_sketch = self.board.get_cell(self.board_widget.selected_cell).get_value()
+                if not is_empty and is_sketch and self.board.get_cell(self.board_widget.selected_cell).set_value(value=display_value, is_sketch=False):
                     board_changed = True
 
             elif new_value == -2:
                 # Backspace key was pressed, clear the cell
-                if self.board.set_cell(self.board_widget.selected_cell, value=0, clear = True):
+                if self.board.get_cell(self.board_widget.selected_cell).set_value(value=0, clear = True):
                     board_changed = True
 
             else:
                 # sketch the value
-                if self.board.set_cell(self.board_widget.selected_cell, value=new_value, is_sketch=True):
+                if self.board.get_cell(self.board_widget.selected_cell).set_value(value=new_value, is_sketch=True):
                     board_changed = True
 
         if board_changed:

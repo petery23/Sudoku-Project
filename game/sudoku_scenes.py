@@ -160,7 +160,7 @@ def get_end_screen(width: int, height: int, is_winner: bool, on_restart_button: 
                 Button(
                     position=(width // 2, int(height / 1.5)),
                     on_interact=lambda: on_restart_button(),
-                    foreground=Text("Medium", WHITE, button_font),
+                    foreground=Text("Back", WHITE, button_font),
                     background=Box((250, 50), color=PURPLE),
                     size=(250, 50)
                 ),
@@ -178,7 +178,7 @@ def get_end_screen(width: int, height: int, is_winner: bool, on_restart_button: 
                 Button(
                     position=(width // 2, int(height / 1.5)),
                     on_interact=lambda: on_restart_button(),
-                    foreground=Text("Medium", WHITE, button_font),
+                    foreground=Text("Back", WHITE, button_font),
                     background=Box((250, 50), color=PURPLE),
                     size=(250, 50)
                 ),

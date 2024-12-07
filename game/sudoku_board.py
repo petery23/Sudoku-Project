@@ -110,7 +110,8 @@ class SudokuBoard(SudokuBoardSubject):
     def is_full(self) -> bool:
         for row in self.__state:
             for cell in row:
-                if cell.get_value()[1]:
+                _, is_empty, is_sketch = cell.get_value()
+                if is_empty or is_sketch:
                     return False
         return True
 
@@ -126,37 +127,6 @@ class SudokuBoard(SudokuBoardSubject):
 
     def get_cell(self, grid_pos: tuple[int, int]) -> SudokuBoardCell:
         return self.__state[grid_pos[0]][grid_pos[1]]
-
-    def set_cell(self, grid_pos: tuple[int, int], value: int = 0, clear: bool = False, is_sketch: bool = False) -> bool:
-        """
-
-        Args:
-            grid_pos:
-            value:
-            clear:
-            is_sketch:
-
-        Returns:
-            True if cell was changed
-
-        """
-
-        cell = self.__state[grid_pos[0]][grid_pos[1]]
-        previous = cell.get_value()
-
-        changed = cell.set_value(value, clear, is_sketch)
-        if not changed:
-            return False
-        else:
-            self.notify_change()
-
-        # if self.validate_cell(grid_pos, cell):
-        #     # new cell state is valid
-        #     return True
-        # else:
-        #     # new cell state is invalid, restore it to its previous state
-        #     if not cell.set_value(*previous): raise Exception("Cell had corrupted state when attempting to set its value.")
-        #     return False
 
     def validate_cell(self, grid_pos: tuple[int, int]):
         """

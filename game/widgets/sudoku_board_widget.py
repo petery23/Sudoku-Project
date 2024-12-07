@@ -7,7 +7,8 @@ from engine.widgets.text import Text
 from game.sudoku_board import SudokuBoard, SudokuBoardCell
 from game.sudoku_difficulty import SudokuDifficulty
 
-NUMBER_COLOR = pygame.Color(0, 0, 0)
+GIVEN_COLOR = pygame.Color(0, 0, 0)
+NUMBER_COLOR = pygame.Color(50, 0, 50)
 SKETCH_COLOR = pygame.Color(50, 0, 50)
 INCORRECT_COLOR = pygame.Color(255, 0, 0)
 
@@ -16,9 +17,10 @@ class SudokuBoardWidget(PositionedWidget):
     surface: pygame.Surface
     board: SudokuBoard
 
-    cell_number_widgets: list[Text]
+    cell_given_number_widgets: list[Text]
     cell_sketch_widgets: list[Text]
-    cell_incorrect_widgets: list[Text]
+    cell_number_widgets: list[Text]
+    cell_incorrect_number_widgets: list[Text]
 
     cell_size: tuple[int, int]
 
@@ -33,16 +35,18 @@ class SudokuBoardWidget(PositionedWidget):
         assert math.isclose(grid_size[0] / grid_size[1], ui_size[0] / ui_size[1]), "grid_size and ui_size must have same aspect ratio!"
         assert ui_size[0] % grid_size[1] == 0 and ui_size[1] % grid_size[1] == 0, "ui_size must be divisible by grid_size!"
 
-        self.cell_number_widgets = []
+        self.cell_given_number_widgets = []
         self.cell_sketch_widgets = []
-        self.cell_incorrect_widgets = []
+        self.cell_number_widgets = []
+        self.cell_incorrect_number_widgets = []
 
         number_font = pygame.font.SysFont("nirmalauisemilight", 42)
         sketch_font = pygame.font.SysFont("nirmalauisemilight", 28, italic=True)
         for n in range(1, 10):
-            self.cell_number_widgets.append(Text(str(n), NUMBER_COLOR, number_font))
+            self.cell_given_number_widgets.append(Text(str(n), GIVEN_COLOR, number_font))
             self.cell_sketch_widgets.append(Text(str(n), SKETCH_COLOR, sketch_font))
-            self.cell_incorrect_widgets.append(Text(str(n), INCORRECT_COLOR, number_font))
+            self.cell_number_widgets.append(Text(str(n), NUMBER_COLOR, number_font))
+            self.cell_incorrect_number_widgets.append(Text(str(n), INCORRECT_COLOR, number_font))
 
         self.cell_size = (ui_size[0] // grid_size[0], ui_size[1] // grid_size[1])
 
@@ -95,12 +99,14 @@ class SudokuBoardWidget(PositionedWidget):
                       grid_pos[1] * self.cell_size[1] + (self.cell_size[1] // 2))
 
         widget: Widget
-        if is_sketch:
+        if cell.is_given():
+            widget = self.cell_given_number_widgets[display_value - 1]
+        elif is_sketch:
             widget = self.cell_sketch_widgets[display_value - 1]
             screen_pos = (screen_pos[0] - self.cell_size[0] / 4,
                           screen_pos[1] - self.cell_size[1] / 4)
-        if self.board.get_difficulty() == SudokuDifficulty.EASY and not self.board.validate_cell(grid_pos):
-            widget = self.cell_incorrect_widgets[display_value - 1]
+        elif self.board.get_difficulty() == SudokuDifficulty.EASY and not self.board.validate_cell(grid_pos):
+            widget = self.cell_incorrect_number_widgets[display_value - 1]
         else:
             widget = self.cell_number_widgets[display_value - 1]
 

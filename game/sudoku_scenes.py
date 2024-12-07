@@ -11,7 +11,7 @@ from engine.widgets.perspective_widget import PerspectiveWidget
 from engine.widgets.positioned import Positioned
 from engine.widgets.text import Text
 from game.scenes.game_scene import GameScene
-from game.scenes.main_menu_scene import MainMenuScene
+from game.scenes.menu_scene import MenuScene
 from game.sudoku_board import SudokuBoard, SudokuBoardCell
 from game.sudoku_difficulty import SudokuDifficulty
 from game.systems.highlight_system import HighlightSystem
@@ -24,12 +24,12 @@ PURPLE = pygame.Color(128, 0, 128)
 USE_PERSPECTIVE_EFFECT = True
 
 
-def get_main_menu_scene(width: int, height: int, on_difficulty_selected: Callable[[SudokuDifficulty], None]) -> MainMenuScene:
+def get_main_menu_scene(width: int, height: int, on_difficulty_selected: Callable[[SudokuDifficulty], None]) -> MenuScene:
     welcome_font = pygame.font.Font(None, 80)
     gm_font = pygame.font.Font(None, 50)
     button_font = pygame.font.Font(None, 48)
 
-    return MainMenuScene([
+    return MenuScene([
         DrawSystem([
             Positioned(
                 position=(width // 2, height // 4),
@@ -98,7 +98,7 @@ def get_game_scene(width: int, height: int, board: SudokuBoard,
                     ),
                 )
 
-    return GameScene((width, height), [
+    return GameScene((width, height), board_widget, [
         ButtonSystem([
             Button(
                 position = (width - 175, height - 220),
@@ -149,7 +149,7 @@ def get_end_screen(width: int, height: int, is_winner: bool, on_restart_button: 
     button_font = pygame.font.Font(None, 48)
 
     if is_winner:
-        return MainMenuScene([
+        return MenuScene([
             DrawSystem([
                 Positioned(
                     position=(width // 2, height // 4),
@@ -167,7 +167,7 @@ def get_end_screen(width: int, height: int, is_winner: bool, on_restart_button: 
             ]),
     ])
     else:
-        return MainMenuScene([
+        return MenuScene([
             DrawSystem([
                 Positioned(
                     position=(width // 2, height // 4),

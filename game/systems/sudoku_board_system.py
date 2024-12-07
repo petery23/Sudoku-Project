@@ -11,9 +11,6 @@ from game.sudoku_board import SudokuBoard
 from game.widgets.sudoku_board_widget import SudokuBoardWidget
 
 
-PERSPECTIVE_ROT_ANGLE = 0.2
-
-
 class SudokuBoardSystem(System):
     board: SudokuBoard
     board_widget: SudokuBoardWidget
@@ -99,8 +96,8 @@ class SudokuBoardSystem(System):
 
     def render(self, context: RenderContext):
         if self.perspective_widget is not None:
-            self.perspective_widget.x_rot = math.cos(context.time) * PERSPECTIVE_ROT_ANGLE
-            self.perspective_widget.y_rot = math.sin(context.time) * PERSPECTIVE_ROT_ANGLE
+            self.perspective_widget.x_rot = context.x_rot
+            self.perspective_widget.y_rot = context.y_rot
             self.perspective_widget.draw_onto(context.surface, center=context.surface.get_rect().center)
         else:
             self.board_widget.draw_onto(context.surface, center=context.surface.get_rect().center)

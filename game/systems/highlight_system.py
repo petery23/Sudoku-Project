@@ -1,17 +1,15 @@
-import math
 from enum import Enum
-from typing import Tuple
 
 import glm
 import pygame
 
 from engine.contexts import UpdateContext, RenderContext, SceneChangeContext
-from engine.input import KeyboardEvent, KeyboardAction, MouseState
+from engine.input import KeyboardEvent, KeyboardAction
 from engine.system import System
 from engine.widgets.perspective_widget import PerspectiveWidget
 from engine.widgets.positioned import Positioned
+from game.scenes.game_scene import PERSPECTIVE_FOV
 from game.sudoku_board import SudokuBoard
-from game.systems.sudoku_board_system import PERSPECTIVE_ROT_ANGLE
 from game.widgets.sudoku_board_widget import SudokuBoardWidget
 
 class ArrowKeyDirection(Enum):
@@ -61,15 +59,12 @@ class HighlightSystem(System):
 
         if abs(context.input.mouse_delta[0]) + abs(context.input.mouse_delta[1]) >= 1:
         #if context.input.mouse_state == MouseState.DOWN:
-            x_rot = math.cos(context.time) * PERSPECTIVE_ROT_ANGLE
-            y_rot = math.sin(context.time) * PERSPECTIVE_ROT_ANGLE
-
-            proj_mat = glm.perspective(glm.radians(70.0), 1, 0.1, 100.0)
+            proj_mat = glm.perspective(glm.radians(PERSPECTIVE_FOV), 1, 0.1, 100.0)
             view_mat = glm.lookAt((0.0, 0.0, 2.0), (0.0, 0.0, 0.0), (0.0, 1.0, 0.0))
-            model_mat = glm.lookAt((0.0, 0.0, 0.0), (x_rot, y_rot, -2.0), (0.0, 1.0, 0.0))
+            model_mat = glm.lookAt((0.0, 0.0, 0.0), (context.x_rot, context.y_rot, -2.0), (0.0, 1.0, 0.0))
 
             hit = screen_to_board_pixels(context.input.mouse_pos, context.screen_size, model_mat, view_mat, proj_mat)
-            if abs(hit[0]) <= 1.0 and abs(hit[1]) <= 1.0:
+            if hit is not None and abs(hit[0]) <= 1.0 and abs(hit[1]) <= 1.0:
                 self.board_widget.selected_cell = (int((hit[0] / 2 + 0.5) * self.board_widget.board.get_size()[0]),
                                                    int((-hit[1] / 2 + 0.5) * self.board_widget.board.get_size()[1]))
 
@@ -123,10 +118,8 @@ class HighlightSystem(System):
             return
 
         if self.perspective_widget is not None:
-            self.perspective_widget.x_rot = math.cos(context.time) * PERSPECTIVE_ROT_ANGLE
-            self.perspective_widget.y_rot = math.sin(context.time) * PERSPECTIVE_ROT_ANGLE
-
-
+            self.perspective_widget.x_rot = context.x_rot
+            self.perspective_widget.y_rot = context.y_rot
             self.perspective_widget.draw_onto(context.surface, center=context.surface.get_rect().center)
         else:
             self.positioned_widget.draw_positioned(context.surface)
@@ -145,7 +138,7 @@ def screen_to_board_pixels(
         model: glm.mat4,
         view: glm.mat4,
         proj: glm.mat4
-) -> tuple[float, float] | tuple[None, None]:
+) -> tuple[float, float] | None:
     """
     Convert a mouse position on the screen into a normalized coordinate (x, y) on a board defined by the given matrices.
     """
@@ -165,12 +158,12 @@ def screen_to_board_pixels(
     denom = glm.dot(world_normal, ray_dir)
     if abs(denom) < 1e-8:
         # Ray is parallel to the plane
-        return None, None
+        return None
 
     t = glm.dot(world_normal, (plane_point_world - near_point)) / denom
     if t < 0:
         # Intersection is behind the camera
-        return None, None
+        return None
 
     intersection_world = near_point + t * ray_dir
 

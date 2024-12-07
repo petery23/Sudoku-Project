@@ -17,6 +17,9 @@ class UpdateContext:
     input: InputState
 
     def __init__(self, time: float, dt: float, screen_size: tuple[int, int], input_state: InputState):
+        self.x_rot = 0.0
+        self.y_rot = 0.0
+
         self.time = time
         self.dt = dt
         self.screen_size = screen_size
@@ -28,6 +31,9 @@ class RenderContext:
     surface: pygame.Surface
 
     def __init__(self, time: float, surface: pygame.Surface):
+        self.x_rot = 0.0
+        self.y_rot = 0.0
+
         self.time = time
         self.surface = surface
 

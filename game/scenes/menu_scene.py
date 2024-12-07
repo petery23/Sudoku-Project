@@ -9,7 +9,7 @@ BLACK = (0, 0, 0)
 PURPLE = (128, 0, 128)
 
 
-class MainMenuScene(Scene):
+class MenuScene(Scene):
     def __init__(self, systems: list[System]) -> None:
         self.lines: list[list[float]] = []
 

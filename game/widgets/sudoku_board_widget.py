@@ -40,10 +40,11 @@ class SudokuBoardWidget(PositionedWidget):
         self.cell_number_widgets = []
         self.cell_incorrect_number_widgets = []
 
+        given_font = pygame.font.SysFont("nirmalauisemilight", 42)
         number_font = pygame.font.SysFont("nirmalauisemilight", 42)
         sketch_font = pygame.font.SysFont("nirmalauisemilight", 28, italic=True)
         for n in range(1, 10):
-            self.cell_given_number_widgets.append(Text(str(n), GIVEN_COLOR, number_font))
+            self.cell_given_number_widgets.append(Text(str(n), GIVEN_COLOR, given_font))
             self.cell_sketch_widgets.append(Text(str(n), SKETCH_COLOR, sketch_font))
             self.cell_number_widgets.append(Text(str(n), NUMBER_COLOR, number_font))
             self.cell_incorrect_number_widgets.append(Text(str(n), INCORRECT_COLOR, number_font))

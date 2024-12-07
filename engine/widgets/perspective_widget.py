@@ -3,6 +3,7 @@ import pygame
 import pygame_shaders
 
 from engine.widget import Widget, PositionedWidget
+from game.scenes.game_scene import PERSPECTIVE_FOV
 
 PERSPECTIVE_VERTEX_SHADER_PATH = "shaders/perspective.vert"
 PERSPECTIVE_FRAGMENT_SHADER_PATH = "shaders/perspective.frag"
@@ -57,7 +58,7 @@ class PerspectiveWidget(Widget):
         if should_repaint_child:
             self.__repaint_child()
 
-        proj_mat = glm.perspective(glm.radians(70.0), 1, 0.1, 100.0)
+        proj_mat = glm.perspective(glm.radians(PERSPECTIVE_FOV), 1, 0.1, 100.0)
         view_mat = glm.lookAt((0.0, 0.0, 2.0), (0.0, 0.0, 0.0), (0.0, 1.0, 0.0))
         model_mat = glm.lookAt((0.0, 0.0, 0.0), (self.x_rot, self.y_rot, -2.0), (0.0, 1.0, 0.0))
 

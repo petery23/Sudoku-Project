@@ -1,4 +1,5 @@
 import math
+from typing import Callable
 
 import pygame
 from engine.contexts import SceneChangeContext
@@ -19,11 +20,16 @@ class SudokuBoardSystem(System):
     perspective_widget: PerspectiveWidget | None
     keyboard_inputs: list[int]
 
-    def __init__(self, board: SudokuBoard, board_widget: SudokuBoardWidget, perspective_widget: PerspectiveWidget | None):
+    on_game_over: Callable[[bool], None]
+
+    def __init__(self, board: SudokuBoard, board_widget: SudokuBoardWidget, perspective_widget: PerspectiveWidget | None,
+                 on_game_over: Callable[[bool], None]):
         self.board = board
         self.board_widget = board_widget
         self.perspective_widget = perspective_widget
         self.keyboard_inputs = []
+
+        self.on_game_over = on_game_over
 
     def enter_scope(self, context: SceneChangeContext):
         self.board.add_observer(self.__on_board_state_changed)
@@ -50,10 +56,14 @@ class SudokuBoardSystem(System):
                 self.keyboard_inputs.append(8)
             case pygame.K_9:
                 self.keyboard_inputs.append(9)
-            case pygame.K_RETURN:
+            case pygame.K_RETURN | pygame.K_SPACE:
                 self.keyboard_inputs.append(-1)
-            case pygame.K_BACKSPACE:
+            case pygame.K_BACKSPACE | pygame.K_DELETE:
                 self.keyboard_inputs.append(-2)
+            case pygame.K_w:
+                self.on_game_over(True)
+            case pygame.K_l:
+                self.on_game_over(False)
 
     def update(self, context: UpdateContext):
         board_changed = False
@@ -82,11 +92,9 @@ class SudokuBoardSystem(System):
 
             if self.board.is_full():
                 if self.board.is_solved():
-                    # end game: win
-                    pass
+                    self.on_game_over(True)
                 else:
-                    # end game: lose
-                    pass
+                    self.on_game_over(False)
 
 
 

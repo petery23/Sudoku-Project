@@ -76,7 +76,8 @@ def on_reset_button(board_widget, board):
     board.notify_change()
 
 def get_game_scene(width: int, height: int, board: SudokuBoard,
-                   on_restart_button, on_exit_button: Callable) -> GameScene:
+                   on_restart_button: Callable[[], None], on_exit_button: Callable[[], None],
+                   on_game_over: Callable[[bool], None]) -> GameScene:
     button_font = pygame.font.Font(None, 48)
     ui_size = min(width, height) - (0 if USE_PERSPECTIVE_EFFECT else 9 * 9)
 
@@ -129,6 +130,7 @@ def get_game_scene(width: int, height: int, board: SudokuBoard,
                 size=board_widget.get_size(),
                 child=board_widget,
             ) if USE_PERSPECTIVE_EFFECT else None,
+            on_game_over=on_game_over,
         ),
         HighlightSystem(
             board=board_widget.board,
@@ -142,11 +144,11 @@ def get_game_scene(width: int, height: int, board: SudokuBoard,
         ),
     ])
 
-def get_end_screen(width: int, height: int, isWinner: bool, on_restart_button: Callable): 
+def get_end_screen(width: int, height: int, is_winner: bool, on_restart_button: Callable):
     welcome_font = pygame.font.Font(None, 80)
     button_font = pygame.font.Font(None, 48)
 
-    if isWinner:
+    if is_winner:
         return MainMenuScene([
             DrawSystem([
                 Positioned(

@@ -66,7 +66,8 @@ def get_main_menu_scene(width: int, height: int, on_difficulty_selected: Callabl
     ])
 
 
-def get_game_scene(width: int, height: int, board: SudokuBoard, on_exit_button_pushed: Callable) -> GameScene:
+def get_game_scene(width: int, height: int, board: SudokuBoard,
+                   on_restart_button, on_exit_button: Callable) -> GameScene:
     button_font = pygame.font.Font(None, 48)
     ui_size = min(width, height) - (0 if USE_PERSPECTIVE_EFFECT else 9 * 9)
 
@@ -110,21 +111,21 @@ def get_game_scene(width: int, height: int, board: SudokuBoard, on_exit_button_p
         ButtonSystem([
             Button(
                 position = (width - 175, height - 220),
-                on_interact = lambda: on_exit_button_pushed(),
+                on_interact = lambda: on_exit_button(),
                 foreground = Text("Reset", WHITE, button_font),
                 background = Box((120, 50), color = PURPLE),
                 size = (120, 50)
             ),
             Button(
                 position = (width - 175, height - 160),
-                on_interact = lambda: on_exit_button_pushed(),
+                on_interact = lambda: on_restart_button(),
                 foreground = Text("Restart", WHITE, button_font),
                 background = Box((120, 50), color = PURPLE),
                 size = (120, 50)
             ),
             Button(
                 position = (width - 175, height - 100),
-                on_interact = lambda: on_exit_button_pushed(),
+                on_interact = lambda: on_exit_button(),
                 foreground = Text("Exit", WHITE, button_font),
                 background = Box((120, 50), color = PURPLE),
                 size = (120, 50)

@@ -12,7 +12,7 @@ from engine.widgets.positioned import Positioned
 from engine.widgets.text import Text
 from game.scenes.game_scene import GameScene
 from game.scenes.main_menu_scene import MainMenuScene
-from game.sudoku_board import SudokuBoard
+from game.sudoku_board import SudokuBoard, SudokuBoardCell
 from game.sudoku_difficulty import SudokuDifficulty
 from game.systems.highlight_system import HighlightSystem
 from game.systems.sudoku_board_system import SudokuBoardSystem
@@ -66,6 +66,15 @@ def get_main_menu_scene(width: int, height: int, on_difficulty_selected: Callabl
     ])
 
 
+def on_reset_button(board_widget, board):
+    for x in range(board.get_size()[0]):
+        for y in range(board.get_size()[1]):
+            if not board.get_cell((y, x)).is_given():
+                board.get_cell((y,x)).set_value(0)
+
+    board_widget.board = board
+    board.notify_change()
+
 def get_game_scene(width: int, height: int, board: SudokuBoard,
                    on_restart_button, on_exit_button: Callable) -> GameScene:
     button_font = pygame.font.Font(None, 48)
@@ -89,29 +98,10 @@ def get_game_scene(width: int, height: int, board: SudokuBoard,
                 )
 
     return GameScene((width, height), [
-        SudokuBoardSystem(
-            board=board_widget.board,
-            board_widget=board_widget,
-            perspective_widget=PerspectiveWidget(
-                enable_mipmaps=True,
-                size=board_widget.get_size(),
-                child=board_widget,
-            ) if USE_PERSPECTIVE_EFFECT else None,
-        ),
-        HighlightSystem(
-            board=board_widget.board,
-            board_widget=board_widget,
-            selection_outline_widget=selection_outline_widget,
-            perspective_widget = PerspectiveWidget(
-                enable_mipmaps=False,
-                size=board_widget.get_size(),
-                child=selection_outline_widget
-            ) if USE_PERSPECTIVE_EFFECT else None,
-        ),
         ButtonSystem([
             Button(
                 position = (width - 175, height - 220),
-                on_interact = lambda: on_exit_button(),
+                on_interact = lambda: on_reset_button(board_widget, board),
                 foreground = Text("Reset", WHITE, button_font),
                 background = Box((120, 50), color = PURPLE),
                 size = (120, 50)
@@ -131,4 +121,23 @@ def get_game_scene(width: int, height: int, board: SudokuBoard,
                 size = (120, 50)
             ),
         ]),
+        SudokuBoardSystem(
+            board=board_widget.board,
+            board_widget=board_widget,
+            perspective_widget=PerspectiveWidget(
+                enable_mipmaps=True,
+                size=board_widget.get_size(),
+                child=board_widget,
+            ) if USE_PERSPECTIVE_EFFECT else None,
+        ),
+        HighlightSystem(
+            board=board_widget.board,
+            board_widget=board_widget,
+            selection_outline_widget=selection_outline_widget,
+            perspective_widget = PerspectiveWidget(
+                enable_mipmaps=False,
+                size=board_widget.get_size(),
+                child=selection_outline_widget
+            ) if USE_PERSPECTIVE_EFFECT else None,
+        ),
     ])

@@ -21,6 +21,15 @@ def main():
         board_state, solution = generate_sudoku(9, difficulty.value)
         board = SudokuBoard(board_state, solution, difficulty)
 
+<<<<<<< HEAD
+=======
+        for x in range(board.get_size()[0]):
+            for y in range(board.get_size()[1]):
+                if not (board.get_cell((x, y)).get_value()[0] == 0):
+                    board.get_cell((x, y)).__given = True
+
+
+>>>>>>> b175230 (Added functionality for reset button)
         game_scene = get_game_scene(WINDOW_WIDTH, WINDOW_HEIGHT, board,
                                     on_restart_button, on_exit_button)
         engine.load_scene(game_scene)

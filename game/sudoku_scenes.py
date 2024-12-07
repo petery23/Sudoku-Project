@@ -21,6 +21,8 @@ from game.widgets.sudoku_board_widget import SudokuBoardWidget
 WHITE = pygame.Color(255, 255, 255)
 PURPLE = pygame.Color(128, 0, 128)
 
+USE_PERSPECTIVE_EFFECT = False
+
 
 def get_main_menu_scene(width: int, height: int, on_difficulty_selected: Callable[[SudokuDifficulty], None]) -> MainMenuScene:
     welcome_font = pygame.font.Font(None, 80)
@@ -66,7 +68,7 @@ def get_main_menu_scene(width: int, height: int, on_difficulty_selected: Callabl
 
 def get_game_scene(width: int, height: int, board: SudokuBoard, on_exit_button_pushed: Callable) -> GameScene:
     button_font = pygame.font.Font(None, 48)
-    ui_size = min(width, height)
+    ui_size = min(width, height) - (0 if USE_PERSPECTIVE_EFFECT else 9 * 9)
 
     board_widget = SudokuBoardWidget(
                 board=board,
@@ -76,6 +78,15 @@ def get_game_scene(width: int, height: int, board: SudokuBoard, on_exit_button_p
     board_pixel_size = board_widget.get_size()
     board_cell_pixel_size = (board_pixel_size[0] // board.get_size()[0], board_pixel_size[1] // board.get_size()[1])
 
+    selection_outline_widget = Positioned(
+                    position=(0, 0),
+                    child=OutlinedBox(
+                        size=board_cell_pixel_size,
+                        width=4,
+                        color=pygame.Color(128, 0, 128),
+                    ),
+                )
+
     return GameScene((width, height), [
         SudokuBoardSystem(
             board=board_widget.board,
@@ -84,23 +95,17 @@ def get_game_scene(width: int, height: int, board: SudokuBoard, on_exit_button_p
                 enable_mipmaps=True,
                 size=board_widget.get_size(),
                 child=board_widget,
-            )
+            ) if USE_PERSPECTIVE_EFFECT else None,
         ),
         HighlightSystem(
             board=board_widget.board,
             board_widget=board_widget,
+            selection_outline_widget=selection_outline_widget,
             perspective_widget = PerspectiveWidget(
                 enable_mipmaps=False,
                 size=board_widget.get_size(),
-                child=Positioned(
-                    position=(0, 0),
-                    child=OutlinedBox(
-                        size=board_cell_pixel_size,
-                        width=4,
-                        color=pygame.Color(128, 0, 128),
-                    ),
-                )
-            )
+                child=selection_outline_widget
+            ) if USE_PERSPECTIVE_EFFECT else None,
         ),
         ButtonSystem([
             Button(

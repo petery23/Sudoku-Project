@@ -6,7 +6,9 @@ import pygame
 from engine.contexts import UpdateContext, RenderContext, SceneChangeContext
 from engine.input import KeyboardEvent, KeyboardAction
 from engine.system import System
+from engine.widgets.outlined_box import OutlinedBox
 from engine.widgets.perspective_widget import PerspectiveWidget
+from engine.widgets.positioned import Positioned
 from game.sudoku_board import SudokuBoard
 from game.systems.sudoku_board_system import PERSPECTIVE_ROT_ANGLE
 from game.widgets.sudoku_board_widget import SudokuBoardWidget
@@ -22,13 +24,14 @@ class HighlightSystem(System):
     board_pixel_size: tuple[int, int]
 
     board_widget: SudokuBoardWidget
-
-    perspective_widget: PerspectiveWidget
+    positioned_widget: Positioned
+    perspective_widget: PerspectiveWidget | None
 
     arrow_key_inputs: list[ArrowKeyDirection]
 
-    def __init__(self, board: SudokuBoard, board_widget: SudokuBoardWidget, perspective_widget: PerspectiveWidget):
+    def __init__(self, board: SudokuBoard, board_widget: SudokuBoardWidget, selection_outline_widget: Positioned, perspective_widget: PerspectiveWidget | None):
         self.perspective_widget = perspective_widget
+        self.positioned_widget = selection_outline_widget
         self.board_widget = board_widget
         
         self.board_pixel_size = self.board_widget.get_size()
@@ -91,18 +94,28 @@ class HighlightSystem(System):
             hovered_x = self.board_widget.selected_cell[0] * self.board_cell_pixel_size[0] + self.board_cell_pixel_size[0] // 2
             hovered_y = self.board_widget.selected_cell[1] * self.board_cell_pixel_size[1] + self.board_cell_pixel_size[1] // 2
 
+            if self.perspective_widget is None:
+                top_left_x = (context.screenSize[0] - self.board_pixel_size[0]) // 2
+                top_left_y = (context.screenSize[1] - self.board_pixel_size[1]) // 2
+
+                hovered_x += top_left_x
+                hovered_y += top_left_y
+
             # selection has changed, repaint
-            self.perspective_widget.child.position = (hovered_x, hovered_y)
-            self.perspective_widget.child.make_dirty()
+            self.positioned_widget.position = (hovered_x, hovered_y)
+            self.positioned_widget.make_dirty()
 
 
     def render(self, context: RenderContext):
         if self.board_widget.selected_cell[0] == -1 or self.board_widget.selected_cell[1] == -1:
             return
 
-        self.perspective_widget.x_rot = math.cos(context.time) * PERSPECTIVE_ROT_ANGLE
-        self.perspective_widget.y_rot = math.sin(context.time) * PERSPECTIVE_ROT_ANGLE
-        self.perspective_widget.draw_onto(context.surface, center=context.surface.get_rect().center)
+        if self.perspective_widget is not None:
+            self.perspective_widget.x_rot = math.cos(context.time) * PERSPECTIVE_ROT_ANGLE
+            self.perspective_widget.y_rot = math.sin(context.time) * PERSPECTIVE_ROT_ANGLE
+            self.perspective_widget.draw_onto(context.surface, center=context.surface.get_rect().center)
+        else:
+            self.positioned_widget.draw_positioned(context.surface)
 
 
     def exit_scope(self, context: SceneChangeContext):

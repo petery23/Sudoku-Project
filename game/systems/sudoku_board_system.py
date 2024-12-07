@@ -16,10 +16,10 @@ PERSPECTIVE_ROT_ANGLE = 60.0
 class SudokuBoardSystem(System):
     board: SudokuBoard
     board_widget: SudokuBoardWidget
-    perspective_widget: PerspectiveWidget
+    perspective_widget: PerspectiveWidget | None
     keyboard_inputs: list[int]
 
-    def __init__(self, board: SudokuBoard, board_widget: SudokuBoardWidget, perspective_widget: PerspectiveWidget):
+    def __init__(self, board: SudokuBoard, board_widget: SudokuBoardWidget, perspective_widget: PerspectiveWidget | None):
         self.board = board
         self.board_widget = board_widget
         self.perspective_widget = perspective_widget
@@ -69,9 +69,12 @@ class SudokuBoardSystem(System):
             self.board.notify_change()
 
     def render(self, context: RenderContext):
-        self.perspective_widget.x_rot = math.cos(context.time) * PERSPECTIVE_ROT_ANGLE
-        self.perspective_widget.y_rot = math.sin(context.time) * PERSPECTIVE_ROT_ANGLE
-        self.perspective_widget.draw_onto(context.surface, center=context.surface.get_rect().center)
+        if self.perspective_widget is not None:
+            self.perspective_widget.x_rot = math.cos(context.time) * PERSPECTIVE_ROT_ANGLE
+            self.perspective_widget.y_rot = math.sin(context.time) * PERSPECTIVE_ROT_ANGLE
+            self.perspective_widget.draw_onto(context.surface, center=context.surface.get_rect().center)
+        else:
+            self.board_widget.draw_onto(context.surface, center=context.surface.get_rect().center)
 
     def exit_scope(self, context: SceneChangeContext):
         self.board.remove_observer(self.__on_board_state_changed)

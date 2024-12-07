@@ -5,6 +5,8 @@ from engine.contexts import UpdateContext, RenderContext, SceneChangeContext
 from engine.input import InputState
 from engine.scene import Scene
 
+# To check OS
+import platform
 
 class Engine:
     target_fps: float
@@ -26,7 +28,13 @@ class Engine:
         #pygame.display.gl_set_attribute(pygame.GL_MULTISAMPLEBUFFERS, 1)
         #pygame.display.gl_set_attribute(pygame.GL_MULTISAMPLESAMPLES, 4)
 
+        # Check if OS is mac to request core profile or else openGL won't work
+        if platform.system() == 'Darwin':
+            pygame.display.gl_set_attribute(pygame.GL_CONTEXT_PROFILE_MASK, pygame.GL_CONTEXT_PROFILE_CORE)
+            pygame.display.gl_set_attribute(pygame.GL_CONTEXT_FORWARD_COMPATIBLE_FLAG, True)
+
         # pygame.OPENGL flag allows the use of custom shaders
+
         self.display = pygame.display.set_mode(window_size, pygame.OPENGL | pygame.DOUBLEBUF)
         self.surface = pygame.Surface(self.display.get_size())
         self.screen_shader = pygame_shaders.DefaultScreenShader(self.surface)

@@ -107,6 +107,20 @@ class SudokuBoard(SudokuBoardSubject):
             for y in range(len(state[x])):
                 self.__state[x].append(SudokuBoardCell(state[x][y],given=state[x][y]!=0))
 
+    def is_full(self) -> bool:
+        for row in self.__state:
+            for cell in row:
+                if cell.get_value()[1]:
+                    return False
+        return True
+
+    def is_solved(self) -> bool:
+        for i, row in enumerate(self.__state):
+            for j, cell in enumerate(row):
+                if cell.get_value()[0] != self.__solution[i][j]:
+                    return False
+        return True
+
     def get_size(self) -> tuple[int, int]:
         return len(self.__state), len(self.__state[0])
 

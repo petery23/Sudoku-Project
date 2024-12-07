@@ -80,6 +80,16 @@ class SudokuBoardSystem(System):
         if board_changed:
             self.board.notify_change()
 
+            if self.board.is_full():
+                if self.board.is_solved():
+                    # end game: win
+                    pass
+                else:
+                    # end game: lose
+                    pass
+
+
+
     def render(self, context: RenderContext):
         if self.perspective_widget is not None:
             self.perspective_widget.x_rot = math.cos(context.time) * PERSPECTIVE_ROT_ANGLE

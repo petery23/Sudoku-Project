@@ -12,14 +12,14 @@ class SceneChangeContext:
 class UpdateContext:
     time: float
     dt: float
-    screenSize: tuple[int, int]
+    screen_size: tuple[int, int]
 
     input: InputState
 
-    def __init__(self, time: float, dt: float, screenSize: tuple[int, int], input_state: InputState):
+    def __init__(self, time: float, dt: float, screen_size: tuple[int, int], input_state: InputState):
         self.time = time
         self.dt = dt
-        self.screenSize = screenSize
+        self.screen_size = screen_size
         self.input = input_state
 
 

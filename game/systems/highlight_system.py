@@ -68,7 +68,7 @@ class HighlightSystem(System):
             view_mat = glm.lookAt((0.0, 0.0, 2.0), (0.0, 0.0, 0.0), (0.0, 1.0, 0.0))
             model_mat = glm.lookAt((0.0, 0.0, 0.0), (x_rot, y_rot, -2.0), (0.0, 1.0, 0.0))
 
-            hit = screen_to_board_pixels(context.input.mouse_pos, context.screenSize, model_mat, view_mat, proj_mat)
+            hit = screen_to_board_pixels(context.input.mouse_pos, context.screen_size, model_mat, view_mat, proj_mat)
             if abs(hit[0]) <= 1.0 and abs(hit[1]) <= 1.0:
                 self.board_widget.selected_cell = (int((hit[0] / 2 + 0.5) * self.board_widget.board.get_size()[0]),
                                                    int((-hit[1] / 2 + 0.5) * self.board_widget.board.get_size()[1]))
@@ -107,8 +107,8 @@ class HighlightSystem(System):
             hovered_y = self.board_widget.selected_cell[1] * self.board_cell_pixel_size[1] + self.board_cell_pixel_size[1] // 2
 
             if self.perspective_widget is None:
-                top_left_x = (context.screenSize[0] - self.board_pixel_size[0]) // 2
-                top_left_y = (context.screenSize[1] - self.board_pixel_size[1]) // 2
+                top_left_x = (context.screen_size[0] - self.board_pixel_size[0]) // 2
+                top_left_y = (context.screen_size[1] - self.board_pixel_size[1]) // 2
 
                 hovered_x += top_left_x
                 hovered_y += top_left_y

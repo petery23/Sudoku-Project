@@ -141,3 +141,45 @@ def get_game_scene(width: int, height: int, board: SudokuBoard,
             ) if USE_PERSPECTIVE_EFFECT else None,
         ),
     ])
+
+def get_end_screen(width: int, height: int, isWinner: bool, on_restart_button: Callable): 
+    welcome_font = pygame.font.Font(None, 80)
+    button_font = pygame.font.Font(None, 48)
+
+    if isWinner:
+        return MainMenuScene([
+            DrawSystem([
+                Positioned(
+                    position=(width // 2, height // 4),
+                    child=Text("You win!", WHITE, welcome_font)
+                ),
+            ]),
+            ButtonSystem([
+                Button(
+                    position=(width // 2, int(height / 1.5)),
+                    on_interact=lambda: on_restart_button(),
+                    foreground=Text("Medium", WHITE, button_font),
+                    background=Box((250, 50), color=PURPLE),
+                    size=(250, 50)
+                ),
+            ]),
+    ])
+    else:
+        return MainMenuScene([
+            DrawSystem([
+                Positioned(
+                    position=(width // 2, height // 4),
+                    child=Text("You lose!", WHITE, welcome_font)
+                ),
+            ]),
+            ButtonSystem([
+                Button(
+                    position=(width // 2, int(height / 1.5)),
+                    on_interact=lambda: on_restart_button(),
+                    foreground=Text("Medium", WHITE, button_font),
+                    background=Box((250, 50), color=PURPLE),
+                    size=(250, 50)
+                ),
+            ]),
+    ])
+

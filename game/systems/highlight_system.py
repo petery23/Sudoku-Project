@@ -4,7 +4,7 @@ from enum import Enum
 import pygame
 
 from engine.contexts import UpdateContext, RenderContext, SceneChangeContext
-from engine.input import KeyboardEvent, KeyboardAction
+from engine.input import KeyboardEvent, KeyboardAction, MouseState
 from engine.system import System
 from engine.widgets.outlined_box import OutlinedBox
 from engine.widgets.perspective_widget import PerspectiveWidget
@@ -58,7 +58,9 @@ class HighlightSystem(System):
     def update(self, context: UpdateContext):
         previous = self.board_widget.selected_cell
 
-        if abs(context.input.mouse_delta[0]) + abs(context.input.mouse_delta[1]) >= 1:
+        #if abs(context.input.mouse_delta[0]) + abs(context.input.mouse_delta[1]) >= 1:
+        if context.input.mouse_state == MouseState.DOWN:
+
             # mouse has moved
             # finds cell being hovered over
             top_left_x = (context.screenSize[0] - self.board_pixel_size[0]) // 2
@@ -66,7 +68,7 @@ class HighlightSystem(System):
 
             mouse_x, mouse_y = context.input.mouse_pos
 
-            if mouse_x < top_left_x or mouse_x > top_left_x + self.board_pixel_size[0]:
+            if mouse_x <= top_left_x or mouse_x > top_left_x + self.board_pixel_size[0]:
                 # mouse is outside board horizontally
                 pass
             elif mouse_y < top_left_y or mouse_y > top_left_y + self.board_pixel_size[1]:

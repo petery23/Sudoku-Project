@@ -59,11 +59,16 @@ class SudokuBoardSystem(System):
         while len(self.keyboard_inputs) > 0:
             new_value = self.keyboard_inputs.pop(0)
             if new_value == -1:
-                # special new_value, enter was pressed
-                continue
+                # commiting the current sketched value
+                cell = self.board.get_cell(self.board_widget.selected_cell)
+                sketched_value = cell.get_value()[0] if cell.get_value()[2] else 0
+                if sketched_value != 0 and self.board.set_cell(self.board_widget.selected_cell, value=sketched_value, is_sketch=False):
+                    board_changed = True
 
-            if self.board.set_cell(self.board_widget.selected_cell, value=new_value, is_sketch=True):
-                board_changed = True
+            else:
+                # sketch the value
+                if self.board.set_cell(self.board_widget.selected_cell, value=new_value, is_sketch=True):
+                    board_changed = True
 
         if board_changed:
             self.board.notify_change()

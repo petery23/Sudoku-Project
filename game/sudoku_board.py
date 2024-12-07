@@ -131,15 +131,18 @@ class SudokuBoard(SudokuBoardSubject):
         previous = cell.get_value()
 
         changed = cell.set_value(value, clear, is_sketch)
-        if not changed: return False
-
-        if self.validate_cell(grid_pos, cell):
-            # new cell state is valid
-            return True
-        else:
-            # new cell state is invalid, restore it to its previous state
-            if not cell.set_value(*previous): raise Exception("Cell had corrupted state when attempting to set its value.")
+        if not changed:
             return False
+        else:
+            self.notify_change()
+
+        # if self.validate_cell(grid_pos, cell):
+        #     # new cell state is valid
+        #     return True
+        # else:
+        #     # new cell state is invalid, restore it to its previous state
+        #     if not cell.set_value(*previous): raise Exception("Cell had corrupted state when attempting to set its value.")
+        #     return False
 
     def __valid_cell(self, grid_pos: tuple[int,int], cell: SudokuBoardCell):
         """

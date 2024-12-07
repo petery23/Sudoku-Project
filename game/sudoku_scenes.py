@@ -21,7 +21,7 @@ from game.widgets.sudoku_board_widget import SudokuBoardWidget
 WHITE = pygame.Color(255, 255, 255)
 PURPLE = pygame.Color(128, 0, 128)
 
-USE_PERSPECTIVE_EFFECT = False
+USE_PERSPECTIVE_EFFECT = True
 
 
 def get_main_menu_scene(width: int, height: int, on_difficulty_selected: Callable[[SudokuDifficulty], None]) -> MainMenuScene:

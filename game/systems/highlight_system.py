@@ -1,12 +1,13 @@
 import math
 from enum import Enum
+from typing import Tuple
 
+import glm
 import pygame
 
 from engine.contexts import UpdateContext, RenderContext, SceneChangeContext
 from engine.input import KeyboardEvent, KeyboardAction, MouseState
 from engine.system import System
-from engine.widgets.outlined_box import OutlinedBox
 from engine.widgets.perspective_widget import PerspectiveWidget
 from engine.widgets.positioned import Positioned
 from game.sudoku_board import SudokuBoard
@@ -58,25 +59,34 @@ class HighlightSystem(System):
     def update(self, context: UpdateContext):
         previous = self.board_widget.selected_cell
 
-        #if abs(context.input.mouse_delta[0]) + abs(context.input.mouse_delta[1]) >= 1:
-        if context.input.mouse_state == MouseState.DOWN:
+        if abs(context.input.mouse_delta[0]) + abs(context.input.mouse_delta[1]) >= 1:
+        #if context.input.mouse_state == MouseState.DOWN:
+            x_rot = math.cos(context.time) * PERSPECTIVE_ROT_ANGLE
+            y_rot = math.sin(context.time) * PERSPECTIVE_ROT_ANGLE
 
-            # mouse has moved
-            # finds cell being hovered over
-            top_left_x = (context.screenSize[0] - self.board_pixel_size[0]) // 2
-            top_left_y = (context.screenSize[1] - self.board_pixel_size[1]) // 2
+            proj_mat = glm.perspective(glm.radians(70.0), 1, 0.1, 100.0)
+            view_mat = glm.lookAt((0.0, 0.0, 2.0), (0.0, 0.0, 0.0), (0.0, 1.0, 0.0))
+            model_mat = glm.lookAt((0.0, 0.0, 0.0), (x_rot, y_rot, -2.0), (0.0, 1.0, 0.0))
 
-            mouse_x, mouse_y = context.input.mouse_pos
+            hit = screen_to_board_pixels(context.input.mouse_pos, context.screenSize, model_mat, view_mat, proj_mat)
+            if abs(hit[0]) <= 1.0 and abs(hit[1]) <= 1.0:
+                self.board_widget.selected_cell = (int((hit[0] / 2 + 0.5) * self.board_widget.board.get_size()[0]),
+                                                   int((-hit[1] / 2 + 0.5) * self.board_widget.board.get_size()[1]))
 
-            if mouse_x <= top_left_x or mouse_x > top_left_x + self.board_pixel_size[0]:
-                # mouse is outside board horizontally
-                pass
-            elif mouse_y < top_left_y or mouse_y > top_left_y + self.board_pixel_size[1]:
-                # mouse is outside board vertically
-                pass
-            else:
-                self.board_widget.selected_cell = ((mouse_x - top_left_x) // self.board_cell_pixel_size[0],
-                                                   (mouse_y - top_left_y) // self.board_cell_pixel_size[1])
+            # top_left_x = (context.screenSize[0] - self.board_pixel_size[0]) // 2
+            # top_left_y = (context.screenSize[1] - self.board_pixel_size[1]) // 2
+            #
+            # mouse_x, mouse_y = context.input.mouse_pos
+            #
+            # if mouse_x <= top_left_x or mouse_x > top_left_x + self.board_pixel_size[0]:
+            #     # mouse is outside board horizontally
+            #     pass
+            # elif mouse_y < top_left_y or mouse_y > top_left_y + self.board_pixel_size[1]:
+            #     # mouse is outside board vertically
+            #     pass
+            # else:
+            #     self.board_widget.selected_cell = ((mouse_x - top_left_x) // self.board_cell_pixel_size[0],
+            #                                        (mouse_y - top_left_y) // self.board_cell_pixel_size[1])
 
         else:
             # mouse hasn't moved, defer to arrow keys
@@ -115,6 +125,8 @@ class HighlightSystem(System):
         if self.perspective_widget is not None:
             self.perspective_widget.x_rot = math.cos(context.time) * PERSPECTIVE_ROT_ANGLE
             self.perspective_widget.y_rot = math.sin(context.time) * PERSPECTIVE_ROT_ANGLE
+
+
             self.perspective_widget.draw_onto(context.surface, center=context.surface.get_rect().center)
         else:
             self.positioned_widget.draw_positioned(context.surface)
@@ -125,3 +137,47 @@ class HighlightSystem(System):
 
     def dispose(self):
         pass
+
+
+def screen_to_board_pixels(
+        mouse_pos: tuple[int, int],
+        screen_size: tuple[int, int],
+        model: glm.mat4,
+        view: glm.mat4,
+        proj: glm.mat4
+) -> tuple[float, float] | tuple[None, None]:
+    """
+    Convert a mouse position on the screen into a normalized coordinate (x, y) on a board defined by the given matrices.
+    """
+
+    viewport = glm.vec4(0, 0, screen_size[0], screen_size[1])
+    mouse_y_inverted = screen_size[1] - mouse_pos[1]
+    model_view = view * model
+
+    near_point = glm.unProject(glm.vec3(mouse_pos[0], mouse_y_inverted, 0.0), model_view, proj, viewport)
+    far_point = glm.unProject(glm.vec3(mouse_pos[0], mouse_y_inverted, 1.0), model_view, proj, viewport)
+
+    ray_dir = glm.normalize(far_point - near_point)
+
+    world_normal = glm.normalize((model * glm.vec4(0, 0, 1, 0)).xyz)
+    plane_point_world = (model * glm.vec4(0, 0, 0, 1)).xyz
+
+    denom = glm.dot(world_normal, ray_dir)
+    if abs(denom) < 1e-8:
+        # Ray is parallel to the plane
+        return None, None
+
+    t = glm.dot(world_normal, (plane_point_world - near_point)) / denom
+    if t < 0:
+        # Intersection is behind the camera
+        return None, None
+
+    intersection_world = near_point + t * ray_dir
+
+    inv_model = glm.inverse(model)
+    intersection_local = inv_model * glm.vec4(intersection_world.x, intersection_world.y, intersection_world.z, 1.0)
+
+    board_x = intersection_local.x * (screen_size[0] / screen_size[1])
+    board_y = intersection_local.y
+
+    return board_x, board_y

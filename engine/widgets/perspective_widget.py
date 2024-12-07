@@ -1,3 +1,4 @@
+import glm
 import pygame
 import pygame_shaders
 
@@ -14,6 +15,8 @@ class PerspectiveWidget(Widget):
 
     x_rot: float = 0.0
     y_rot: float = 0.0
+
+    mouse_pos: tuple[int, int] = (0, 0)
 
     def __init__(self, child: PositionedWidget, size: tuple[int, int], enable_mipmaps: bool = False):
         self.child = child
@@ -33,7 +36,7 @@ class PerspectiveWidget(Widget):
     def __repaint_child(self) -> None:
         self.surface.fill((0, 0, 0, 0))
         self.child.draw_positioned(self.surface)
-        print(f"Perspective ({self}): repainted")
+        #print(f"Perspective ({self}): repainted")
 
 
     def draw_onto(self,
@@ -54,9 +57,14 @@ class PerspectiveWidget(Widget):
         if should_repaint_child:
             self.__repaint_child()
 
-        self.shader.send("texturePixelSize", self.surface.get_size()[0])
-        self.shader.send("x_rot", self.x_rot)
-        self.shader.send("y_rot", self.y_rot)
+        proj_mat = glm.perspective(glm.radians(70.0), 1, 0.1, 100.0)
+        view_mat = glm.lookAt((0.0, 0.0, 2.0), (0.0, 0.0, 0.0), (0.0, 1.0, 0.0))
+        model_mat = glm.lookAt((0.0, 0.0, 0.0), (self.x_rot, self.y_rot, -2.0), (0.0, 1.0, 0.0))
+
+        self.shader.send("u_projMat", [x for xs in proj_mat.to_list() for x in xs])
+        self.shader.send("u_viewMat", [x for xs in view_mat.to_list() for x in xs])
+        self.shader.send("u_modelMat", [x for xs in model_mat.to_list() for x in xs])
+
         render = self.shader.render(update_surface=should_repaint_child)
 
         dest.blit(render, target)

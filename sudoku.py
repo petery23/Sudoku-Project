@@ -1,3 +1,5 @@
+import pygame.display
+
 from engine.engine import Engine
 from game.scenes import game_scene
 from game.sudoku_board import SudokuBoard

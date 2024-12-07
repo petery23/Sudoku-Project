@@ -1,6 +1,7 @@
 pygame==2.6.1
 pygments==2.18.0
 moderngl==5.12.0
+pyglm==2.7.3
 pygame_shaders @ git+https://github.com/willhuff0/pygame_shaders@main
 
 numpy~=2.1.3

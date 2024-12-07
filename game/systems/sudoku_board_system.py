@@ -10,7 +10,7 @@ from game.sudoku_board import SudokuBoard
 from game.widgets.sudoku_board_widget import SudokuBoardWidget
 
 
-PERSPECTIVE_ROT_ANGLE = 60.0
+PERSPECTIVE_ROT_ANGLE = 0.2
 
 
 class SudokuBoardSystem(System):

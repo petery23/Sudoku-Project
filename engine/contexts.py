@@ -1,3 +1,5 @@
+from typing import Callable
+
 import pygame
 
 from engine.input import InputState
@@ -15,6 +17,8 @@ class UpdateContext:
     screen_size: tuple[int, int]
 
     input: InputState
+
+    on_selection_changed: Callable[[float, float], None]
 
     def __init__(self, time: float, dt: float, screen_size: tuple[int, int], input_state: InputState):
         self.x_rot = 0.0

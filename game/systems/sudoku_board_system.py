@@ -54,7 +54,7 @@ class SudokuBoardSystem(System):
                 self.keyboard_inputs.append(9)
             case pygame.K_RETURN | pygame.K_SPACE:
                 self.keyboard_inputs.append(-1)
-            case pygame.K_BACKSPACE | pygame.K_DELETE:
+            case pygame.K_BACKSPACE | pygame.K_DELETE | pygame.K_x:
                 self.keyboard_inputs.append(-2)
 
     def update(self, context: UpdateContext):
@@ -80,6 +80,8 @@ class SudokuBoardSystem(System):
 
         if board_changed:
             self.board.notify_change()
+
+            context.on_selection_changed(1.0 - self.board_widget.selected_cell[0] / 9, self.board_widget.selected_cell[1] / 9)
 
             if self.board.is_full():
                 if self.board.is_solved():

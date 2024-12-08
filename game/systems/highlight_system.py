@@ -87,15 +87,18 @@ class HighlightSystem(System):
             # mouse hasn't moved, defer to arrow keys
             while len(self.arrow_key_inputs) > 0:
                 input_direction = self.arrow_key_inputs.pop(0)
-                match input_direction:
-                    case ArrowKeyDirection.UP:
-                        self.board_widget.selected_cell = (self.board_widget.selected_cell[0], max(self.board_widget.selected_cell[1] - 1, 0))
-                    case ArrowKeyDirection.DOWN:
-                        self.board_widget.selected_cell = (self.board_widget.selected_cell[0], min(self.board_widget.selected_cell[1] + 1, self.board_widget.board.get_size()[1] - 1))
-                    case ArrowKeyDirection.RIGHT:
-                        self.board_widget.selected_cell = (min(self.board_widget.selected_cell[0] + 1, self.board_widget.board.get_size()[0] - 1), self.board_widget.selected_cell[1])
-                    case ArrowKeyDirection.LEFT:
-                        self.board_widget.selected_cell = (max(self.board_widget.selected_cell[0] - 1, 0), self.board_widget.selected_cell[1])
+                if self.board_widget.selected_cell[0] == -1 or self.board_widget.selected_cell[1] == -1:
+                    self.board_widget.selected_cell = (4, 4)
+                else:
+                    match input_direction:
+                        case ArrowKeyDirection.UP:
+                            self.board_widget.selected_cell = (self.board_widget.selected_cell[0], max(self.board_widget.selected_cell[1] - 1, 0))
+                        case ArrowKeyDirection.DOWN:
+                            self.board_widget.selected_cell = (self.board_widget.selected_cell[0], min(self.board_widget.selected_cell[1] + 1, self.board_widget.board.get_size()[1] - 1))
+                        case ArrowKeyDirection.RIGHT:
+                            self.board_widget.selected_cell = (min(self.board_widget.selected_cell[0] + 1, self.board_widget.board.get_size()[0] - 1), self.board_widget.selected_cell[1])
+                        case ArrowKeyDirection.LEFT:
+                            self.board_widget.selected_cell = (max(self.board_widget.selected_cell[0] - 1, 0), self.board_widget.selected_cell[1])
 
         if previous != self.board_widget.selected_cell:
             hovered_x = self.board_widget.selected_cell[0] * self.board_cell_pixel_size[0] + self.board_cell_pixel_size[0] // 2
@@ -111,6 +114,8 @@ class HighlightSystem(System):
             # selection has changed, repaint
             self.positioned_widget.position = (hovered_x, hovered_y)
             self.positioned_widget.make_dirty()
+
+            context.on_selection_changed(1.0 - self.board_widget.selected_cell[0] / 9, self.board_widget.selected_cell[1] / 9)
 
 
     def render(self, context: RenderContext):

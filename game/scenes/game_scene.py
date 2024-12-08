@@ -88,6 +88,14 @@ class GameScene(Scene):
         context.x_rot = self.x_rot * self.fun_multiplier
         context.y_rot = self.y_rot * self.fun_multiplier
 
+        def on_selection_changed(norm_x: float, norm_y: float) -> None:
+            self.idle_delay = IDLE_DELAY
+
+            self.x_rot_target = lerp(-PERSPECTIVE_MOUSE_INTENSITY, PERSPECTIVE_MOUSE_INTENSITY, norm_x)
+            self.y_rot_target = lerp(-PERSPECTIVE_MOUSE_INTENSITY, PERSPECTIVE_MOUSE_INTENSITY, norm_y)
+
+        context.on_selection_changed = on_selection_changed
+
         super().update(context)
 
 

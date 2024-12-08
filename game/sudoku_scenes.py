@@ -24,7 +24,7 @@ PURPLE = pygame.Color(128, 0, 128)
 USE_PERSPECTIVE_EFFECT = True
 
 
-def get_main_menu_scene(width: int, height: int, on_difficulty_selected: Callable[[SudokuDifficulty], None]) -> MenuScene:
+def get_main_menu_scene(width: int, height: int, on_difficulty_selected: Callable[[SudokuDifficulty], None], on_exit_button: Callable[[], None]) -> MenuScene:
     welcome_font = pygame.font.Font(None, 80)
     gm_font = pygame.font.Font(None, 50)
     button_font = pygame.font.Font(None, 48)
@@ -62,6 +62,13 @@ def get_main_menu_scene(width: int, height: int, on_difficulty_selected: Callabl
                 background=Box((250, 50), color=PURPLE),
                 size=(250, 50)
             ),
+            Button(
+                position=(width - 125, 75),
+                on_interact=on_exit_button,
+                foreground=Text("Exit", WHITE, button_font),
+                background=Box((120, 50), color=PURPLE),
+                size=(120, 50)
+            ),
         ]),
     ])
 
@@ -76,7 +83,7 @@ def on_reset_button(board_widget, board):
     board.notify_change()
 
 def get_game_scene(width: int, height: int, board: SudokuBoard,
-                   on_restart_button: Callable[[], None], on_exit_button: Callable[[], None],
+                   on_restart_button: Callable[[], None],
                    on_game_over: Callable[[bool], None]) -> GameScene:
     button_font = pygame.font.Font(None, 48)
     ui_size = min(width, height) - (0 if USE_PERSPECTIVE_EFFECT else 9 * 9)
@@ -101,25 +108,18 @@ def get_game_scene(width: int, height: int, board: SudokuBoard,
     return GameScene((width, height), board_widget, [
         ButtonSystem([
             Button(
-                position = (width - 175, height - 220),
+                position = (width - 160, height - 140),
                 on_interact = lambda: on_reset_button(board_widget, board),
-                foreground = Text("Reset", WHITE, button_font),
-                background = Box((120, 50), color = PURPLE),
-                size = (120, 50)
+                foreground = Text("Clear Board", WHITE, button_font),
+                background = Box((210, 50), color = PURPLE),
+                size = (210, 50)
             ),
             Button(
-                position = (width - 175, height - 160),
+                position = (width - 160, height - 80),
                 on_interact = lambda: on_restart_button(),
-                foreground = Text("Restart", WHITE, button_font),
-                background = Box((120, 50), color = PURPLE),
-                size = (120, 50)
-            ),
-            Button(
-                position = (width - 175, height - 100),
-                on_interact = lambda: on_exit_button(),
-                foreground = Text("Exit", WHITE, button_font),
-                background = Box((120, 50), color = PURPLE),
-                size = (120, 50)
+                foreground = Text("Main Menu", WHITE, button_font),
+                background = Box((210, 50), color = PURPLE),
+                size = (210, 50)
             ),
         ]),
         SudokuBoardSystem(

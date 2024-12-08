@@ -4,7 +4,7 @@ import glm
 import pygame
 
 from engine.contexts import UpdateContext, RenderContext, SceneChangeContext
-from engine.input import KeyboardEvent, KeyboardAction
+from engine.input import KeyboardEvent, KeyboardAction, MouseState
 from engine.system import System
 from engine.widgets.perspective_widget import PerspectiveWidget
 from engine.widgets.positioned import Positioned
@@ -57,8 +57,8 @@ class HighlightSystem(System):
     def update(self, context: UpdateContext):
         previous = self.board_widget.selected_cell
 
-        if abs(context.input.mouse_delta[0]) + abs(context.input.mouse_delta[1]) >= 1:
-        #if context.input.mouse_state == MouseState.DOWN:
+        #if abs(context.input.mouse_delta[0]) + abs(context.input.mouse_delta[1]) >= 1:
+        if context.input.mouse_state == MouseState.DOWN:
             proj_mat = glm.perspective(glm.radians(PERSPECTIVE_FOV), 1, 0.1, 100.0)
             view_mat = glm.lookAt((0.0, 0.0, 2.0), (0.0, 0.0, 0.0), (0.0, 1.0, 0.0))
             model_mat = glm.lookAt((0.0, 0.0, 0.0), (context.x_rot, context.y_rot, -2.0), (0.0, 1.0, 0.0))

@@ -28,6 +28,8 @@ class HighlightSystem(System):
 
     arrow_key_inputs: list[ArrowKeyDirection]
 
+    hover_mode: bool = False
+
     def __init__(self, board: SudokuBoard, board_widget: SudokuBoardWidget, selection_outline_widget: Positioned, perspective_widget: PerspectiveWidget | None):
         self.perspective_widget = perspective_widget
         self.positioned_widget = selection_outline_widget
@@ -49,6 +51,8 @@ class HighlightSystem(System):
                 self.arrow_key_inputs.append(ArrowKeyDirection.RIGHT)
             case pygame.K_LEFT:
                 self.arrow_key_inputs.append(ArrowKeyDirection.LEFT)
+            case pygame.K_h:
+                self.hover_mode = not self.hover_mode
 
     def enter_scope(self, context: SceneChangeContext):
         context.input.add_observer(self.__on_keyboard_input)
@@ -57,8 +61,8 @@ class HighlightSystem(System):
     def update(self, context: UpdateContext):
         previous = self.board_widget.selected_cell
 
-        #if abs(context.input.mouse_delta[0]) + abs(context.input.mouse_delta[1]) >= 1:
-        if context.input.mouse_state == MouseState.DOWN:
+        input_condition = abs(context.input.mouse_delta[0]) + abs(context.input.mouse_delta[1]) >= 1 if self.hover_mode else context.input.mouse_state == MouseState.DOWN
+        if input_condition:
             proj_mat = glm.perspective(glm.radians(PERSPECTIVE_FOV), 1, 0.1, 100.0)
             view_mat = glm.lookAt((0.0, 0.0, 2.0), (0.0, 0.0, 0.0), (0.0, 1.0, 0.0))
             model_mat = glm.lookAt((0.0, 0.0, 0.0), (context.x_rot, context.y_rot, -2.0), (0.0, 1.0, 0.0))

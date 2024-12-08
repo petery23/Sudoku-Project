@@ -20,9 +20,14 @@ class UpdateContext:
 
     on_selection_changed: Callable[[float, float], None]
 
+    x_rot: float
+    y_rot: float
+    fun_multiplier: float
+
     def __init__(self, time: float, dt: float, screen_size: tuple[int, int], input_state: InputState):
         self.x_rot = 0.0
         self.y_rot = 0.0
+        self.fun_multiplier = 1.0
 
         self.time = time
         self.dt = dt

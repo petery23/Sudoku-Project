@@ -57,12 +57,23 @@ class SudokuBoardSystem(System):
             case pygame.K_BACKSPACE | pygame.K_DELETE | pygame.K_x:
                 self.keyboard_inputs.append(-2)
 
+            case pygame.K_KP_PLUS:
+                self.keyboard_inputs.append(10000)
+            case pygame.K_KP_MINUS:
+                self.keyboard_inputs.append(-10000)
+
     def update(self, context: UpdateContext):
         board_changed = False
 
         while len(self.keyboard_inputs) > 0:
             new_value = self.keyboard_inputs.pop(0)
-            if new_value == -1:
+
+            if new_value == 10000:
+                context.fun_multiplier += 1.0
+            elif new_value == -10000:
+                context.fun_multiplier -= 1.0
+
+            elif new_value == -1:
                 # commiting the current sketched value
                 display_value, is_empty, is_sketch = self.board.get_cell(self.board_widget.selected_cell).get_value()
                 if not is_empty and is_sketch and self.board.get_cell(self.board_widget.selected_cell).set_value(value=display_value, is_sketch=False):

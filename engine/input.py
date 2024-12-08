@@ -69,9 +69,15 @@ class InputState(KeyboardSubject):
     def process_event(self, event: pygame.event.Event):
         match event.type:
             case pygame.MOUSEBUTTONDOWN:
+                # ignore anything but left mouse button
+                if event.button != 1: return
+
                 self.mouse_down_pos = event.pos
                 self.mouse_state = MouseState.DOWN
             case pygame.MOUSEBUTTONUP:
+                # ignore anything but left mouse button
+                if event.button != 1: return
+
                 self.mouse_up_pos = event.pos
                 self.mouse_state = MouseState.UP
 

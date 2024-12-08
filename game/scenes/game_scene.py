@@ -32,6 +32,8 @@ class GameScene(Scene):
     x_rot = 0.0
     y_rot = 0.0
 
+    fun_multiplier = 1.0
+
     def __init__(self, window_size: tuple[int, int], board_widget: SudokuBoardWidget, systems: list[System]) -> None:
         super().__init__(systems)
         self.lines = []
@@ -83,8 +85,8 @@ class GameScene(Scene):
         self.x_rot, self.x_rot_velocity = smooth_damp(self.x_rot, self.x_rot_target, self.x_rot_velocity, IDLE_TRANSITION_TIME, 100000.0, context.dt)
         self.y_rot, self.y_rot_velocity = smooth_damp(self.y_rot, self.y_rot_target, self.y_rot_velocity, IDLE_TRANSITION_TIME, 100000.0, context.dt)
 
-        context.x_rot = self.x_rot
-        context.y_rot = self.y_rot
+        context.x_rot = self.x_rot * self.fun_multiplier
+        context.y_rot = self.y_rot * self.fun_multiplier
 
         super().update(context)
 
@@ -95,8 +97,8 @@ class GameScene(Scene):
         width = context.surface.get_width()
         height = context.surface.get_height()
 
-        context.x_rot = self.x_rot
-        context.y_rot = self.y_rot
+        context.x_rot = self.x_rot * self.fun_multiplier
+        context.y_rot = self.y_rot * self.fun_multiplier
 
         for line in self.lines:
             start = (line[0] * width, line[1] * height)

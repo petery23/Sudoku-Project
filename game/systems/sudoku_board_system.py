@@ -1,4 +1,3 @@
-import math
 from typing import Callable
 
 import pygame
@@ -57,10 +56,6 @@ class SudokuBoardSystem(System):
                 self.keyboard_inputs.append(-1)
             case pygame.K_BACKSPACE | pygame.K_DELETE:
                 self.keyboard_inputs.append(-2)
-            case pygame.K_w:
-                self.on_game_over(True)
-            case pygame.K_l:
-                self.on_game_over(False)
 
     def update(self, context: UpdateContext):
         board_changed = False

@@ -1,6 +1,4 @@
-import math,random
-import pygame
-from pygments.styles.dracula import background
+import math, random
 
 """
 This was adapted from a GeeksforGeeks article "Program for Sudoku Generator" by Aarti_Rathi and Ankur Trisal

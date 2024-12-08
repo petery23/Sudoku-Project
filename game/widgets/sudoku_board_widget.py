@@ -8,8 +8,8 @@ from game.sudoku_board import SudokuBoard, SudokuBoardCell
 from game.sudoku_difficulty import SudokuDifficulty
 
 GIVEN_COLOR = pygame.Color(0, 0, 0)
-NUMBER_COLOR = pygame.Color(50, 0, 50)
-SKETCH_COLOR = pygame.Color(50, 0, 50)
+NUMBER_COLOR = pygame.Color(160, 0, 160)
+SKETCH_COLOR = pygame.Color(125, 0, 125)
 INCORRECT_COLOR = pygame.Color(255, 0, 0)
 
 

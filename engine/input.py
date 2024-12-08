@@ -60,13 +60,13 @@ class InputState(KeyboardSubject):
         self.mouse_delta = (new_mouse_pos[0] - self.mouse_pos[0], new_mouse_pos[1] - self.mouse_pos[1])
         self.mouse_pos = new_mouse_pos
 
-    def process_event(self, event: pygame.event.Event):
         match self.mouse_state:
             case MouseState.DOWN:
                 self.mouse_state = MouseState.DRAGGING
             case MouseState.UP:
                 self.mouse_state = MouseState.NONE
 
+    def process_event(self, event: pygame.event.Event):
         match event.type:
             case pygame.MOUSEBUTTONDOWN:
                 self.mouse_down_pos = event.pos
